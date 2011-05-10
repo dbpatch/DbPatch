@@ -16,6 +16,7 @@ class DbPatch_Core_Application
     {
         //@todo create database, inject config
         $this->opts = new Zend_Console_Getopt($this->getRules());
+
         try {
             $action = $this->getAction();
         }
@@ -46,6 +47,7 @@ class DbPatch_Core_Application
             echo $this->getUsageMessage() . PHP_EOL;
             exit;
         }
+        $log->log('End DbPatch');
 
 
     }

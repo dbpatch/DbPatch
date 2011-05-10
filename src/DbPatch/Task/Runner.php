@@ -40,9 +40,17 @@ class DbPatch_Task_Runner
             }
 
             $task = new $class;
+
+            $logger = $this->getLogger();
+            $task->setLogger($logger);
             
             return $task;
 
+    }
+
+    protected function getLogger()
+    {
+        return new DbPatch_Core_Log();
     }
 
 
