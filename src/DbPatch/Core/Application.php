@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: sandy
- * Date: 08-05-11
- * Time: 19:17
- * To change this template use File | Settings | File Templates.
- */
 
 class DbPatch_Core_Application
 {
@@ -14,73 +7,78 @@ class DbPatch_Core_Application
 
     public function main()
     {
-        //@todo create database, inject config
-        $this->opts = new Zend_Console_Getopt($this->getRules());
+        $opts = $this->getOpts();
+        $config = $this->getConfig($opts);
+        $db = $this->getDb($config);
+        $logger = $this->getLogger();
 
         try {
-            $action = $this->getAction();
+            $action = $this->getAction($opts);
         }
-        catch(Zend_Console_Getopt_Exception $e)
-         {
-             echo 'ERROR: '.$e->getMessage() . PHP_EOL . PHP_EOL;
-             echo $this->getUsageMessage() . PHP_EOL;
-             exit;
-
-         }
+        catch (Zend_Console_Getopt_Exception $e)
+        {
+            echo 'ERROR: ' . $e->getMessage() . PHP_EOL . PHP_EOL;
+            echo $opts->getUsageMessage() . PHP_EOL;
+            exit;
+        }
 
         $runner = new DbPatch_Task_Runner();
         $task = $runner->getTask($action);
+        $task->setConfig($config)->setDb($db)->setLogger($logger);
 
         try
         {
 
-            if ($this->getVerbose())
-            {
-              DbPatch_Core_Application::renderVersion();
+            if ($config->verbose) {
+                DbPatch_Core_Application::renderVersion();
             }
 
             $task->execute();
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
-            echo 'ERROR: '.$e->getMessage() . PHP_EOL . PHP_EOL;
-            echo $this->getUsageMessage() . PHP_EOL;
+            echo 'ERROR: ' . $e->getMessage() . PHP_EOL . PHP_EOL;
+            echo $opts->getUsageMessage() . PHP_EOL;
             exit;
         }
-        $log->log('End DbPatch');
-
-
     }
 
-    public function getUsageMessage()
+    protected function getLogger()
     {
-       echo $this->opts->getUsageMessage();
+        return new DbPatch_Core_Log();
     }
 
-    public function getVerbose()
+    protected function getOpts()
     {
-        if (isset($this->opts->v)) {
-            return true;
-        }
-        return false;
+        return new Zend_Console_Getopt($this->getRules());
     }
 
-    protected function getAction()
+    protected function getConfig($opts)
+    {
+        $config = new DbPatch_Core_Config($opts);
+        return $config->getConfig();
+    }
+
+    protected function getDb($config)
+    {
+        $db = new DbPatch_Core_Db($config);
+        return $db->getDb();
+    }
+
+    protected function getAction($opts)
     {
 
-        if (!isset($this->opts->config)) {
-            throw new Zend_Console_Getopt_Exception('No config file set');
-        } elseif (isset($this->opts->install)) {
+        if (isset($opts->install)) {
             return 'install';
-        } elseif (isset($this->opts->reinstall)) {
+        } elseif (isset($opts->reinstall)) {
             return 'reinstall';
-        } elseif (isset($this->opts->remove)) {
+        } elseif (isset($opts->remove)) {
             return 'remove';
-        } elseif (isset($this->opts->status)) {
+        } elseif (isset($opts->status)) {
             return 'status';
-        } elseif (isset($this->opts->sync)) {
+        } elseif (isset($opts->sync)) {
             return 'sync';
-        } elseif (isset($this->opts->upgrade)) {
+        } elseif (isset($opts->upgrade)) {
             return 'upgrade';
         } else {
             throw new Zend_Console_Getopt_Exception('Unknown action');
@@ -100,7 +98,7 @@ class DbPatch_Core_Application
             'reinstall' => 'Reinstall database',
             'skip=s' => 'Skip patch number',
             'status' => 'Database patch status',
-            'sync'  => 'Sync database',
+            'sync' => 'Sync database',
             'upgrade' => 'Upgrade database',
             'verbose' => 'Displays debug information.',
         );
@@ -114,6 +112,6 @@ class DbPatch_Core_Application
      */
     public static function renderVersion()
     {
-      echo 'DbPatch version ' . DbPatch_Core_Version::VERSION . PHP_EOL . PHP_EOL;
+        echo 'DbPatch version ' . DbPatch_Core_Version::VERSION . PHP_EOL . PHP_EOL;
     }
 }

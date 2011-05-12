@@ -22,7 +22,6 @@ class DbPatch_Core_Log
     
     protected $threshold = self::DEBUG;
 
-
     protected $logger = null;
 
     public function __construct()

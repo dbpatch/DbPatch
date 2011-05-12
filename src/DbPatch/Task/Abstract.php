@@ -9,6 +9,9 @@
  
 abstract class DbPatch_Task_Abstract
 {
+    const DEFAULT_BRANCH = 'default';
+    const TABLE = 'db_changelog';
+
     protected $logger = null;
     protected $db = null;
     protected $config = null;
@@ -18,16 +21,29 @@ abstract class DbPatch_Task_Abstract
     public function setLogger(DbPatch_Core_Log $logger)
     {
         $this->logger = $logger;
+        return $this;
     }
 
-    public function setDb(DbPatch_Core_Db $db)
+    public function setDb($db)
     {
         $this->db = $db;
+        return $this;
     }
 
-    public function setConfig(DbPatch_Core_Config $config)
+    public function setConfig($config)
     {
         $this->config = $config;
+        return $this;
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    public function getDb()
+    {
+        return $this->db;
     }
 
 }

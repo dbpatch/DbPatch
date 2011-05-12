@@ -14,7 +14,7 @@ class DbPatch_Task_Runner
     public function __construct()
     {}
 
-    public function getTask($action)
+    public function getTask($action, $configFilename = null)
     {
         $class = null;
         
@@ -41,17 +41,7 @@ class DbPatch_Task_Runner
 
             $task = new $class;
 
-            $logger = $this->getLogger();
-            $task->setLogger($logger);
-            
             return $task;
 
     }
-
-    protected function getLogger()
-    {
-        return new DbPatch_Core_Log();
-    }
-
-
 }
