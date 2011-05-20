@@ -15,6 +15,7 @@ abstract class DbPatch_Task_Abstract
     protected $logger = null;
     protected $db = null;
     protected $config = null;
+    protected $writer = null;
     
     abstract public function execute();
 
@@ -40,7 +41,12 @@ abstract class DbPatch_Task_Abstract
     {
         return $this->config;
     }
-
+    
+    public function getWriter()
+    {
+        return $this->writer;
+    }
+    
     public function getDb()
     {
         return $this->db;

@@ -4,11 +4,13 @@ class DbPatch_Core_Config
 {
     protected $config = null;
 
-    public function __construct($opts)
+    /**
+     * Create config object
+     *
+     * @param string $filename optional config file
+     */
+    public function __construct($filename = null)
     {
-        //@todo opts can overrule configs!
-        $filename = '';
-
         if (is_null($filename) || !file_exists($filename)) {
             $filename = $this->searchConfigFile();
         }
