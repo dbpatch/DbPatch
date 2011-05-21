@@ -2,7 +2,7 @@
 
 // Add src path is on include_path
 set_include_path(implode(PATH_SEPARATOR, array(
-    dirname(__FILE__) . '/../src',
+    realpath(dirname(__FILE__) . '/../src'),
     get_include_path(),
 )));
 
