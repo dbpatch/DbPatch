@@ -34,7 +34,7 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
         $argv = array('./dbpatch.php', 'update', '--force');
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertEquals(array('force'), $console->getOptions());
+        $this->assertEquals(array('force' => ''), $console->getOptions());
     }
     
     public function testGetOptionsWithNoOptions()
