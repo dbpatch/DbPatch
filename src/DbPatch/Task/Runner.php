@@ -16,7 +16,7 @@ class DbPatch_Task_Runner
         return $this->writer;
     }
 
-    public function getTask($task)
+    public function getTask($task, $options)
     {
         if (empty($task)) {
             throw new Exception('Please provide an action');
@@ -26,7 +26,8 @@ class DbPatch_Task_Runner
 
         try {
             $task = new $class;
-            $task->setWriter($this->getWriter());
+            $task->setWriter($this->getWriter())
+                ->setOptions($options);
 
         } catch (Exception $e) {
             throw new Exception('Unknown task: '.$task);

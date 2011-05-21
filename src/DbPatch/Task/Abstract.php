@@ -16,6 +16,7 @@ abstract class DbPatch_Task_Abstract
     protected $db = null;
     protected $config = null;
     protected $writer = null;
+    protected $options = array();
     
     abstract public function execute();
 
@@ -57,5 +58,99 @@ abstract class DbPatch_Task_Abstract
     {
         return $this->db;
     }
+    
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    }
+    
+    public function getOptions()
+    {
+        return $this->options;
+    }
+    
+    /**
+     * Validate if the changelog is present in the database
+     * if not try to create the table
+     * @return bool
+     */
+    protected function validateChangelog()
+    {
+        if ($this->changelogExists()) {
+            return true;
+        }
+        
+        $this->getWriter()
+            ->line("no changelog database found, try to create one");
+            
+        if (!$this->createChangelog()) {
+            $this->getWriter()
+                ->line("couldn't create a changelog table");
+            return false;
+        }
 
+        return true;
+    }
+    
+    /**
+     * Checks if the changelog table is present in the database
+     * @return bool
+     */
+    protected function changelogExists()
+    {
+        $db = $this->getDb();
+        $result = $db->fetchOne(
+            $db->quoteInto('SHOW TABLES LIKE ?', $this->table)
+        );
+        
+        return (bool) ($result == self::TABLE);
+    }
+
+    /**
+     * Try to create the changelog table
+     * @return bool
+     */
+    protected function createChangelog()
+    {
+        if ($this->changelogExists()) {
+            return true;
+        }
+
+        $db = $this->getDb();
+        
+        $db->query(
+            sprintf("
+            CREATE TABLE %s (
+            `patch_number` int(11) NOT NULL,
+            `branch` varchar(50) NOT NULL,
+            `completed` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+            `filename` varchar(100) NOT NULL,
+            `description` varchar(200) default NULL,
+            PRIMARY KEY  (`patch_number`, `branch`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
+            $db->quoteIdentifier(self::TABLE)
+        ));
+
+        if (! $this->changelogExists()) {
+            return false;
+        }
+        
+        $this->getWriter()->line(sprintf("changelog table '%s' created", self::TABLE));
+        $this->getWriter()->line("use 'dbpatch sync' to sync your patches");
+        
+        return true;
+    }
+    
+    /**
+     * Determine the branch based on the given parameters
+     * @param array $params
+     * @return string
+     */
+    protected function getBranch($params)
+    {
+        if (isset($params['branch']) && $params['branch'] != '') {
+            return $params['branch'];
+        }
+        return self::DEFAULT_BRANCH;
+    }
 }

@@ -29,7 +29,7 @@ class DbPatch_Core_Application
         try
         {
             $task    = $console->getTask();
-            $runner->getTask($task)
+            $runner->getTask($task, $console->getOptions())
                 ->setConfig($config)
                 ->setDb($db)
                 ->setLogger($logger)
@@ -37,6 +37,7 @@ class DbPatch_Core_Application
         }
         catch (Exception $e)
         {
+            $this->getWriter()->line($e->getMessage());
             $runner->showHelp();
             exit;
         }
