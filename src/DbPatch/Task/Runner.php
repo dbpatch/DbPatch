@@ -19,7 +19,7 @@ class DbPatch_Task_Runner
     public function getTask($task, $options)
     {
         if (empty($task)) {
-            throw new Exception('Please provide an action');
+            throw new Exception('Please provide a command');
         }
 
         $class = 'DbPatch_Task_' . ucfirst($task);

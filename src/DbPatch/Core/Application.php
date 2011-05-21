@@ -1,43 +1,42 @@
 <?php
-
+/**
+ * The core application object.
+ * Setup different objects and fireup the task runner
+ */
 class DbPatch_Core_Application
 {
-
-    protected $opts;
-
     public function main()
     {
-        $console = $this->getConsole($_SERVER['argv']);
-        $logger  = $this->getLogger();
-        $writer  = $this->getWriter();
-        $runner = $this->getTaskRunner($writer);
+        $console    = $this->getConsole($_SERVER['argv']);
+        $logger     = $this->getLogger();
+        $writer     = $this->getWriter();
+        $runner     = $this->getTaskRunner($writer);
         $configFile = $console->getOptionValue('config', null);
 
         try {
             $config  = $this->getConfig($configFile);
         } catch (Exception $e) {
-            $logger->log($e->getMessage());
-            $runner->showVersion();
+            $this->getWriter()->line($e->getMessage())->line();
+            $runner->showHelp();
             exit;
         }
-        $db      = $this->getDb($config);
+        
+        $db = $this->getDb($config);
 
         if ($console->issetOption('version')) {
             return $runner->showHelp();
         }
 
-        try
-        {
-            $task    = $console->getTask();
+        try {
+            $task = $console->getTask();
             $runner->getTask($task, $console->getOptions())
                 ->setConfig($config)
                 ->setDb($db)
                 ->setLogger($logger)
                 ->execute();
-        }
-        catch (Exception $e)
-        {
-            $this->getWriter()->line($e->getMessage());
+                
+        } catch (Exception $e) {
+            $this->getWriter()->line($e->getMessage())->line();
             $runner->showHelp();
             exit;
         }
