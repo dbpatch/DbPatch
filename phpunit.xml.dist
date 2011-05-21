@@ -1,30 +1,7 @@
-<phpunit bootstrap="tests/common/bootstrap.php" colors="true">
+<phpunit bootstrap="tests/bootstrap.php" colors="true">
   <testsuites>
-    <testsuite name="DbPatch">
-      <directory>./tests/unit/</directory>
-      <directory suffix=".phpt">./tests/ui/</directory>
+    <testsuite name="Core">
+      <directory>tests/src/DbPatch/Core</directory>
     </testsuite>
   </testsuites>
-  <filter>
-    <whitelist>
-      <directory suffix=".php">./</directory>
-      <exclude>
-        <directory suffix=".php">src/lib/Zend</directory>
-        <directory suffix=".php">tests</directory>
-        <directory suffix=".php">bin</directory>
-      </exclude>
-    </whitelist>
-  </filter>
-  <logging>
-    <log type="coverage-html"
-      title="DbPatch"
-      target="build/coverage"
-      charset="UTF-8"
-      yui="true"
-      highlight="false"
-      lowUpperBound="35"
-      highLowerBound="70" />
-    <log type="coverage-clover" target="build/logs/clover.xml" />
-    <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
-  </logging>
 </phpunit>

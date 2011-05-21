@@ -10,8 +10,10 @@ class DbPatch_Core_Console
 
     public function __construct($argv)
     {
-        $this->arguments = array_slice($argv,1);
-        $this->parseOptions();
+        if (count($argv) > 0 ) {
+            $this->arguments = array_slice($argv,1);
+            $this->parseOptions();
+        }
     }
 
     protected function parseOptions()
