@@ -16,35 +16,21 @@ class DbPatch_Task_Runner
         return $this->writer;
     }
 
-    public function getTask($action, $configFilename = null)
+    public function getTask($task)
     {
-        $class = null;
-        
-        switch($action) {
-            case 'install' : // install
-                $class = 'DbPatch_Task_Install';
-                break;
-            case 'reinstall' : // reinstall
-                $class = 'DbPatch_Task_Reinstall';
-                break;
-            case 'remove' : // remove patch
-                $class = 'DbPatch_Task_Remove';
-                break;
-            case 'status' : // Status
-                $class = 'DbPatch_Task_Status';
-                break;
-            case 'sync' : // Status
-                $class = 'DbPatch_Task_Sync';
-                break;
-            case 'upgrade' : // Upgrade'
-                $class = 'DbPatch_Task_Upgrade';
-                break;
-            default:
-                throw new Exception('unknown task');
+        if (empty($task)) {
+            throw new Exception('Please provide an action');
         }
 
-        $task = new $class;
-        $task->setWriter($this->getWriter());
+        $class = 'DbPatch_Task_' . ucfirst($task);
+
+        try {
+            $task = new $class;
+            $task->setWriter($this->getWriter());
+
+        } catch (Exception $e) {
+            throw new Exception('Unknown task: '.$task);
+        }
         return $task;
     }
     
@@ -59,6 +45,7 @@ class DbPatch_Task_Runner
             ->indent(2)->line('remove     remove a patch file from the changelog')
             ->indent(2)->line('sync       sync the changelog with the current patch files')
             ->indent(2)->line('show       show the contents of a patch file')
+            ->indent(2)->line('status     show latest applied patches')
             ->line()
             ->line('see \'dbpatch help <command>\' for more information on a specific command');
     }

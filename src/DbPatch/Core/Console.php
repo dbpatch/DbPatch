@@ -21,7 +21,14 @@ class DbPatch_Core_Console
         $options = array();
         foreach ($this->arguments as $argument) {
             if (substr($argument, 0, 2) == '--') {
-                $options[] = strtolower(substr($argument,2));
+
+                $tmpArg = explode('=', $argument);
+                $argName = strtolower(substr($tmpArg[0],2));
+                $argValue = '';
+                if (isset($tmpArg[1])) {
+                    $argValue = $tmpArg[1];
+                }
+                $options[$argName] = $argValue;
             }
         }
         $this->options = $options;
@@ -39,7 +46,12 @@ class DbPatch_Core_Console
      */
     public function getTask()
     {
-        return $this->arguments[0];
+        $task = $this->arguments[0];
+
+        if (strpos($task, '--') === false) {
+            return $task;
+        }
+        return '';
     }
 
     /**
@@ -50,5 +62,17 @@ class DbPatch_Core_Console
     public function getOptions()
     {
         return $this->options;
+    }
+
+    public function getOptionValue($option, $default = '')
+    {
+        if (array_key_exists($option, $this->options)) {
+            return $this->options[$option];
+        }
+        return $default;
+    }
+
+    public function issetOption($option) {
+        return array_key_exists($option, $this->options);
     }
 }

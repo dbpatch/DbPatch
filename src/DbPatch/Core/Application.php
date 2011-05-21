@@ -8,19 +8,27 @@ class DbPatch_Core_Application
     public function main()
     {
         $console = $this->getConsole($_SERVER['argv']);
-        
-        //@todo pass optional config file 
-        $config  = $this->getConfig();
-        $db      = $this->getDb($config);
         $logger  = $this->getLogger();
         $writer  = $this->getWriter();
+        $runner = $this->getTaskRunner($writer);
+        $configFile = $console->getOptionValue('config', null);
 
-        $task    = $console->getTask();
-        $options = $console->getOptions();
-        
+        try {
+            $config  = $this->getConfig($configFile);
+        } catch (Exception $e) {
+            $logger->log($e->getMessage());
+            $runner->showVersion();
+            exit;
+        }
+        $db      = $this->getDb($config);
+
+        if ($console->issetOption('version')) {
+            return $runner->showHelp();
+        }
+
         try
         {
-            $runner = $this->getTaskRunner($writer);
+            $task    = $console->getTask();
             $runner->getTask($task)
                 ->setConfig($config)
                 ->setDb($db)

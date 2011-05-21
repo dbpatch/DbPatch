@@ -26,21 +26,34 @@ class DbPatch_Core_Config
                 $dbPatchConfig = array();
                 require_once $filename;
                 $this->config = new Zend_Config($dbPatchConfig);
+                break;
             case 'ini' :
                 $this->config = new Zend_Config_Ini($filename, 'dbPatch');
                 break;
+            case 'xml' :
+                $this->config = new Zend_Config_Xml($filename, 'dbpatch');
+                break;
+            default:
+                throw new Exception('Not a valid config file');
         }
-
     }
 
     protected function searchConfigFile()
     {
-        return './dbpatch.ini';
+        $supportedConfigExtentsions = array('php', 'ini', 'xml');
+
+        foreach($supportedConfigExtentsions as $ext) {
+            $filename = './dbpatch.' . $ext;
+            if (file_exists($filename)) {
+                return $filename;
+            }
+        }
+        return null;
     }
 
     protected function detectConfigType($filename)
     {
-        return 'ini';
+        return strtolower(end(explode('.',$filename )));
     }
 
     public function getConfig()

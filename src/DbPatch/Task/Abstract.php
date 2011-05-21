@@ -37,6 +37,12 @@ abstract class DbPatch_Task_Abstract
         return $this;
     }
 
+    public function setWriter($writer)
+    {
+        $this->writer = $writer;
+        return $this;
+    }
+
     public function getConfig()
     {
         return $this->config;
