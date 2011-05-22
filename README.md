@@ -9,7 +9,7 @@ What is DbPatch?
 Requirements
 ------------
 DbPatch requires the following:
-- PHP 5.2.x
+- PHP 5.1.x
 
 
 

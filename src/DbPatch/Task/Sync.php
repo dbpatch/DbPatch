@@ -16,6 +16,12 @@ class DbPatch_Task_Sync extends DbPatch_Task_Abstract
         }
     }
 
+    public function showHelp()
+    {
+        $this->getWriter()->line('sync');
+    }
+
+
     
 
 

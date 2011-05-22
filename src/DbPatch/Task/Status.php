@@ -96,4 +96,10 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
         return $db->fetchAll($sql);
     }
 
+    public function showHelp()
+    {
+        $this->getWriter()->line('status');
+    }
+
+
 }

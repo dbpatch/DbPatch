@@ -12,4 +12,10 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
         
         die($branch);        
     }
+
+    public function showHelp()
+    {
+        $this->getWriter()->line('update');
+    }
+
 }

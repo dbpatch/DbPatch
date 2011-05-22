@@ -29,6 +29,8 @@ class DbPatch_Core_Console
                     $argValue = $tmpArg[1];
                 }
                 $options[$argName] = $argValue;
+            } else {
+                $options[$argument] = $argument;
             }
         }
         $this->options = $options;

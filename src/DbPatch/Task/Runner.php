@@ -6,6 +6,12 @@ class DbPatch_Task_Runner
 {
     protected $writer = null;
 
+    static public function getValidTasks()
+    {
+        return array('help', 'create', 'remove', 'show', 'status', 'sync', 'update');
+
+    }
+
     public function __construct($writer)
     {
         $this->writer = $writer;
@@ -18,11 +24,11 @@ class DbPatch_Task_Runner
 
     public function getTask($task, $console)
     {
-        if (empty($task)) {
-            throw new Exception('Please provide a command');
+        if (empty($task) || !in_array($task, self::getValidTasks())) {
+            throw new Exception('Please provide a valid command');
         }
 
-        $class = 'DbPatch_Task_' . ucfirst($task);
+        $class = 'DbPatch_Task_' . ucfirst(strtolower($task));
 
         try {
             $task = new $class;

@@ -212,4 +212,28 @@ abstract class DbPatch_Task_Patch_Abstract
         echo "\n".file_get_contents($this->filename)."\n";
     }
 
+    protected function writeFile($filename, $content)
+    {
+        if (!file_exists($filename)) {
+            $fp = fopen($filename, 'w');
+            fwrite($fp, $content);
+            fclose($fp);
+            $this->getWriter()->line('Created empty patch '.$filename);
+        } else {
+            $this->getWriter()->line('Patch '.$this->patchNumber . ' already exists!');
+        }
+
+    }
+
+    protected function getFilename($patchPrefix, $extension)
+    {
+        $branch = '';
+        if ($this->branch != 'default') {
+            $branch .= $this->branch . '-';
+        }
+        $filename = $patchPrefix.'-'. $branch . str_pad($this->patchNumber, 3, '0', STR_PAD_LEFT).'.'. $extension;
+        return $filename;
+    }
+
+
 }

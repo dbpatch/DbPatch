@@ -6,6 +6,7 @@ class DbPatch_Task_Patch_PHP extends DbPatch_Task_Patch_Abstract
         'basename' => null,
         'patch_number' => null,
         'branch' => null,
+        'description' => null,
     );
 
     public function apply()
@@ -15,14 +16,14 @@ class DbPatch_Task_Patch_PHP extends DbPatch_Task_Patch_Abstract
         $phpFile = $this->filename;
 
         if (!file_exists($phpFile)) {
-            $this->error(sprintf('php file %s doesn\'t exists', $phpFile));
+            $this->getWriter()->line(sprintf('php file %s doesn\'t exists', $phpFile));
             return false;
         }
 
         try {
             include($phpFile);
         } catch (Exception $e) {
-            $this->error(sprintf('error php patch: %s', $e->getMessage()));
+            $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
             return false;
         }
 
@@ -38,5 +39,13 @@ class DbPatch_Task_Patch_PHP extends DbPatch_Task_Patch_Abstract
     {
         return $this->getComment(1);
     }
+
+    public function create($description, $patchDirectory, $patchPrefix)
+    {
+        $filename = $this->getFilename($patchPrefix, strtolower($this->getType()));
+        $content = '<?php'. PHP_EOL . '// ' . $description . PHP_EOL;
+        $this->writeFile($patchDirectory . $filename, $content);
+    }
+
 }
  

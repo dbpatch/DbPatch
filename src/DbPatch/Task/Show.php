@@ -32,4 +32,10 @@ class DbPatch_Task_Show extends DbPatch_Task_Abstract
         $patch->show();
         return;
     }
+
+    public function showHelp()
+    {
+        $this->getWriter()->line('show');
+    }
+
 }

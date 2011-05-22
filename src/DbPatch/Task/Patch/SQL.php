@@ -7,6 +7,7 @@ class DbPatch_Task_Patch_SQL extends DbPatch_Task_Patch_Abstract
         'basename' => null,
         'patch_number' => null,
         'branch' => null,
+        'description' => null,
     );
 
     public function apply()
@@ -69,9 +70,16 @@ class DbPatch_Task_Patch_SQL extends DbPatch_Task_Patch_Abstract
         return 'SQL';
     }
 
-
     public function getDescription()
     {
         return $this->getComment(0);
     }
+
+    public function create($description, $patchDirectory, $patchPrefix)
+    {
+        $filename = $this->getFilename($patchPrefix, strtolower($this->getType()));
+        $content = '-- ' . $description . PHP_EOL;
+        $this->writeFile($patchDirectory . $filename, $content);
+    }
+
 }

@@ -1,18 +1,12 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: sandy
- * Date: 08-05-11
- * Time: 23:03
- * To change this template use File | Settings | File Templates.
- */
- 
+
 abstract class DbPatch_Task_Abstract
 {
     const DEFAULT_BRANCH = 'default';
     const TABLE = 'db_changelog';
     const PATCH_DIRECTORY = './database/patch';
     const PATCH_PREFIX = 'patch';
+
 
     /**
      * @var $logger DbPatch_Core_Log
@@ -163,6 +157,7 @@ abstract class DbPatch_Task_Abstract
     /**
      * Check if the passed patch number can be found in the changelog table for the specified branch
      *
+     * @todo Also check if the patch has been modified and return status (no, yes, yes but changed)
      * @param int $patchNumber
      * @param string $branch
      * @return boolean $result true if patch already applied; false if not
@@ -189,6 +184,7 @@ abstract class DbPatch_Task_Abstract
 
     public function getPatches($branch, $searchPatchNumber = null)
     {
+        echo 'Search patches - '.$branch . PHP_EOL;
         $patchDirectory = $this->getPatchDirectory();
         try {
             $iterator = new DirectoryIterator($patchDirectory);
@@ -199,8 +195,13 @@ abstract class DbPatch_Task_Abstract
 
         $branch = $branch == '' ? $this->getBranch() : $branch;
         $patchPrefix = $this->getPatchPrefix();
+
+        if ($branch <> self::DEFAULT_BRANCH) {
+            $patchPrefix .= '-'.$branch;
+        }
+        
         $patches = array();
-        $pattern = '/^'.preg_quote($patchPrefix).'-(\d{3,4})\.(sql|php)$/';
+        $pattern = '/^'.preg_quote($patchPrefix).'-(\d{3})\.(sql|php)$/';
 
         foreach ($iterator as $fileinfo) {
             if ($fileinfo->isDot() || substr($fileinfo->getFilename(),0,1) == '.') {
@@ -363,5 +364,6 @@ abstract class DbPatch_Task_Abstract
         $db->commit();
     }
 
+    abstract function showHelp();
 
 }

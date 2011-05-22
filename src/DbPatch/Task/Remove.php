@@ -76,4 +76,9 @@ class DbPatch_Task_Remove extends DbPatch_Task_Abstract
             $this->getWriter()->line("Removed patch $patchNumber {$branchMsg}in the `" . self::TABLE . "` table");
         }
     }
+
+    public function showHelp()
+    {
+        $this->getWriter()->line('remove');
+    }
 }
