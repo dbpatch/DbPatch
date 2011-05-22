@@ -16,7 +16,7 @@ class DbPatch_Task_Runner
         return $this->writer;
     }
 
-    public function getTask($task, $options)
+    public function getTask($task, $console)
     {
         if (empty($task)) {
             throw new Exception('Please provide a command');
@@ -27,7 +27,7 @@ class DbPatch_Task_Runner
         try {
             $task = new $class;
             $task->setWriter($this->getWriter())
-                ->setOptions($options);
+                ->setConsole($console);
 
         } catch (Exception $e) {
             throw new Exception('Unknown task: '.$task);

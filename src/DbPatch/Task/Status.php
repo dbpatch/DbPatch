@@ -7,15 +7,22 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
     
     public function execute()
     {
-        $this->logger->log('Start DbPatch status');
+        $this->writer->line('Start DbPatch status');
+
+        $branches = $this->detectBranches();
+
+        foreach ($branches as $branch) {
+            $this->showPatchesToApply($branch);
+        }
 
         $patches = $this->getAppliedPatches(self::LIMIT);
-        
+        $this->getWriter()->line()->line("applied patches (".self::LIMIT." latest)")->separate();
+
         if (count($patches) == 0) {
-            echo "no patches found\n";
+             $this->getWriter()->line("no patches found");
         } else {
           foreach ($patches as $patch) {
-              $this->logger->log(sprintf("%04d | %s | %s | %s",
+              $this->writer->line(sprintf("%04d | %s | %s | %s",
                   $patch['patch_number'],
                   $patch['completed'],
                   $patch['filename'],
@@ -23,6 +30,42 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
           }
         }
     }
+
+    /**
+     * Output all the patches to apply for a specific branch
+     * @param string $branch
+     */
+    protected function showPatchesToApply($branch)
+    {
+        $line = 'patches to apply';
+        if ($branch <> self::DEFAULT_BRANCH) {
+            $line .= " for branch '{$branch}'";
+        }
+        $this->getWriter()->line($line)->separate();
+
+        $patches = $this->getPatches($branch);
+
+        if (count($patches) == 0) {
+            $this->getWriter()->line("no patches found");
+        } else {
+          foreach ($patches as $patch) {
+              $this->getWriter()->line(sprintf("%04d | %s | %s",
+                  $patch->patchNumber,
+                  $patch->basename,
+                  $patch->description));
+          }
+
+          $line = "\nuse './dbpatch.sh --debug update";
+          if ($branch <> self::DEFAULT_BRANCH) {
+              $line .= " branch={$branch}";
+          }
+          $line .= "' to apply the patches\n";
+          $this->getWriter()->line($line);
+        }
+    }
+
+
+
 
     protected function getAppliedPatches($limit, $branch='')
     {

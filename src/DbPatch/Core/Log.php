@@ -20,7 +20,7 @@ class DbPatch_Core_Log
     const QUIET = -1;
     const FILE_STDOUT = 'php://stdout';
     
-    protected $threshold = self::DEBUG;
+    protected $threshold = self::INFO;
 
     protected $logger = null;
 
@@ -63,11 +63,12 @@ class DbPatch_Core_Log
             $data = ob_get_clean();
         }
 
+        /*
         $data = (($this->getThreshold() == Zend_Log::DEBUG)
                 ? '[' . number_format(round(memory_get_usage() / 1024 / 1024, 2), 2) . 'mb]: '
                 : '')
                 . $data;
-
+        */
         $this->logger->log($data, $level);
     }
 

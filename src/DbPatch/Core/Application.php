@@ -29,7 +29,7 @@ class DbPatch_Core_Application
 
         try {
             $task = $console->getTask();
-            $runner->getTask($task, $console->getOptions())
+            $runner->getTask($task, $console)
                 ->setConfig($config)
                 ->setDb($db)
                 ->setLogger($logger)

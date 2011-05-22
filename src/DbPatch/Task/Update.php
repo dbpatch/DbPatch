@@ -8,7 +8,7 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
             return;
         }
         
-        $branch = $this->getBranch($this->getOptions());
+        $branch = $this->getBranch();
         
         die($branch);        
     }
