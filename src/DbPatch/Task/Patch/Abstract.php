@@ -5,6 +5,8 @@ abstract class DbPatch_Task_Patch_Abstract
     protected $db = null;
 
     protected $writer = null;
+
+    protected $config = null;
     
     /**
      * Creates a new value object
@@ -161,6 +163,7 @@ abstract class DbPatch_Task_Patch_Abstract
     public function setDb($db)
     {
         $this->db = $db;
+        return $this;
     }
 
     /**
@@ -169,15 +172,28 @@ abstract class DbPatch_Task_Patch_Abstract
     public function getDb()
     {
         return $this->db;
+
     }
     public function setWriter($writer)
     {
         $this->writer = $writer;
+        return $this;
     }
 
     public function getWriter()
     {
         return $this->writer;
+    }
+
+    public function setConfig($config)
+    {
+        $this->config = $config;
+        return $this;
+    }
+
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     /**

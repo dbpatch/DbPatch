@@ -12,25 +12,20 @@ class DbPatch_Task_Patch_SQL extends DbPatch_Task_Patch_Abstract
 
     public function apply()
     {
-
-        //$connectionName = atkconfig('dbpatch_connection_name', 'default');
-        //$config = atkconfig("db");
-
-
-        $content = file_get_contents($this->filename);
+        $content = file_get_contents($this->data['filename']);
         if ($content == '') {
-            $this->error(
-                sprintf('patch file %s is empty', $this->basename)
+            $this->writer->error(
+                sprintf('patch file %s is empty', $this->data['basename'])
             );
             return false;
         }
 
-        $database = $config[$connectionName]['db'];
-        $user     = $config[$connectionName]['user'];
-        $password = $config[$connectionName]['password'];
-        $host     = $config[$connectionName]['host'];
-        $port     = isset($config[$connectionName]['port']) ? $config[$connectionName]['port'] : '';
-
+        $config = $this->config->db->params;
+        $database = $config->dbname;
+        $user     = $config->username;
+        $password = $config->password;
+        $host     = $config->host;
+        $port     = isset($config->port) ? $config->port : '';
 
         if ($password != '') {
             $password = '-p'.$password;
@@ -47,22 +42,21 @@ class DbPatch_Task_Patch_SQL extends DbPatch_Task_Patch_Abstract
             $password,
             $port,
             $database,
-            $patchFile['filename']
+            $this->data['filename']
         );
 
         exec($command, $result, $return);
 
         if ($return <> 0) {
 
-            $this->error(sprintf("invalid SQL in patch file %s:\n\n%s\n",
-                $patchFile['basename'],
-                implode("\n", $result)
+            $this->writer->error(sprintf("invalid SQL in patch file %s:\n\n%s\n",
+                $this->data['basename'],
+                implode(PHP_EOL, $result)
             ));
             return false;
         }
 
         return true;
-
     }
 
     public function getType()

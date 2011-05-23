@@ -7,7 +7,6 @@ abstract class DbPatch_Task_Abstract
     const PATCH_DIRECTORY = './database/patch';
     const PATCH_PREFIX = 'patch';
 
-
     /**
      * @var $logger DbPatch_Core_Log
      */
@@ -182,10 +181,16 @@ abstract class DbPatch_Task_Abstract
         return true;
     }
 
-    public function getPatches($branch, $searchPatchNumber = null)
+    public function getPatches($branch)
     {
-        echo 'Search patches - '.$branch . PHP_EOL;
+        $this->writer->line('scanning patches...');
         $patchDirectory = $this->getPatchDirectory();
+
+        if (!file_exists($patchDirectory)) {
+            $this->writer->error('path '. $patchDirectory .' doesn\'t exists');
+            return array();
+        }
+
         try {
             $iterator = new DirectoryIterator($patchDirectory);
         } catch (Exception $e) {
@@ -201,7 +206,7 @@ abstract class DbPatch_Task_Abstract
         }
         
         $patches = array();
-        $pattern = '/^'.preg_quote($patchPrefix).'-(\d{3})\.(sql|php)$/';
+        $pattern = '/^'.preg_quote($patchPrefix).'-(\d{3,4})\.(sql|php)$/';
 
         foreach ($iterator as $fileinfo) {
             if ($fileinfo->isDot() || substr($fileinfo->getFilename(),0,1) == '.') {
@@ -211,8 +216,7 @@ abstract class DbPatch_Task_Abstract
                 $patchNumber = (int) $matches[1];
 
 
-                if ((!is_null($searchPatchNumber) && $patchNumber != $searchPatchNumber) ||
-                    is_null($searchPatchNumber) && $this->isPatchApplied($patchNumber, $branch)) {
+                if ($this->isPatchApplied($patchNumber, $branch)) {
                     continue;
                 }
                 
