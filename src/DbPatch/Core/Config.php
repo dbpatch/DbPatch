@@ -28,7 +28,7 @@ class DbPatch_Core_Config
                 $this->config = new Zend_Config($dbPatchConfig);
                 break;
             case 'ini' :
-                $this->config = new Zend_Config_Ini($filename, 'dbPatch');
+                $this->config = new Zend_Config_Ini($filename, 'dbpatch');
                 break;
             case 'xml' :
                 $this->config = new Zend_Config_Xml($filename, 'dbpatch');
