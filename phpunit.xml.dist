@@ -3,5 +3,13 @@
     <testsuite name="Core">
       <directory>tests/src/DbPatch/Core</directory>
     </testsuite>
+    <testsuite name="Task">
+      <directory>tests/src/DbPatch/Task</directory>
+    </testsuite>
   </testsuites>
+  <filter>
+      <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src/DbPatch</directory>
+        </whitelist>
+  </filter>
 </phpunit>

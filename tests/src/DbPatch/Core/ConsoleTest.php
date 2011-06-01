@@ -9,7 +9,7 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
     {
         $argv = array();
         
-        $console = new DbPatch_Core_Console($arg);
+        $console = new DbPatch_Core_Console($argv);
         $this->assertNull($console->getTask());
     }
     
@@ -17,7 +17,7 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
     {
         $argv = array('./dbpatch.php');
         
-        $console = new DbPatch_Core_Console($arg);
+        $console = new DbPatch_Core_Console($argv);
         $this->assertNull($console->getTask());
     }
     

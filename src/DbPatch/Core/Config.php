@@ -44,7 +44,10 @@ class DbPatch_Core_Config
 
         foreach($supportedConfigExtentsions as $ext) {
             $filename = './dbpatch.' . $ext;
-            if (file_exists($filename)) {
+            if (
+                (file_exists($filename)) &&
+                (realpath($filename) != realpath($_SERVER['argv'][0]))
+            ) {
                 return $filename;
             }
         }
