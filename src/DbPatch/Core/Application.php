@@ -12,6 +12,11 @@ class DbPatch_Core_Application
         $writer     = $this->getWriter();
         $runner     = $this->getTaskRunner($writer);
         $configFile = $console->getOptionValue('config', null);
+        $useColor   = $console->getOptionValue('color', true);
+
+        if ($useColor) {
+            $writer->setColor($this->getWriterColor());
+        }
 
         try {
             $config  = $this->getConfig($configFile);
@@ -68,9 +73,18 @@ class DbPatch_Core_Application
     {
         return new DbPatch_Core_Writer();
     }
-    
+
     protected function getConsole($argv)
     {
         return new DbPatch_Core_Console($argv);
+    }
+
+    /**
+     * Color object to pass to CLI writer
+     * @return DbPatch_Core_Color
+     */
+    protected function getWriterColor()
+    {
+        return new DbPatch_Core_Color();
     }
 }

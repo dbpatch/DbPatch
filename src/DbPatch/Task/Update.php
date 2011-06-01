@@ -17,7 +17,7 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
         $patchFiles = $this->getPatches($branch);
         
         if (count($patchFiles) == 0) {
-            $this->writer->line("no update needed");
+            $this->writer->success("no update needed");
             return;
         }
 
