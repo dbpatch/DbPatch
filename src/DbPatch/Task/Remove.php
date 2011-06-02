@@ -10,7 +10,7 @@ class DbPatch_Task_Remove extends DbPatch_Task_Abstract
             $filteredPatchNumbers = array_filter($patchNumbers, 'is_numeric');
 
             if (empty($filteredPatchNumbers)) {
-                $this->error('no patch defined or patch isn\'t numeric');
+                $this->writer->error('no patch defined or patch isn\'t numeric');
                 return;
             }
 
@@ -20,7 +20,7 @@ class DbPatch_Task_Remove extends DbPatch_Task_Abstract
             }
             return;
         }
-        $this->writer->line('No patch defined or patch isn\'t numeric');
+        $this->writer->error('No patch defined or patch isn\'t numeric');
         return;
     }
 

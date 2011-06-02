@@ -13,7 +13,7 @@ class DbPatch_Task_Show extends DbPatch_Task_Abstract
                 return;
             }
         }
-        $this->writer->line('No patch defined or patch isn\'t numeric');
+        $this->writer->error('No patch defined or patch isn\'t numeric');
         return;
     }
 
@@ -23,7 +23,7 @@ class DbPatch_Task_Show extends DbPatch_Task_Abstract
         $patch = $this->getPatch($patchNumber, $branch);
 
         if ($patch == null) {
-            $this->writer->line("no patchfile found for patch number: " . $patchNumber);
+            $this->writer->error("no patchfile found for patch number: " . $patchNumber);
             return;
         }
         DbPatch_Task_Runner::showVersion();

@@ -300,7 +300,7 @@ abstract class DbPatch_Task_Abstract
     {
         $db = $this->getDb();
         $result = $db->fetchOne(
-            $db->quoteInto('SHOW TABLES LIKE ?', $this->table)
+            $db->quoteInto('SHOW TABLES LIKE ?', self::TABLE)
         );
         
         return (bool) ($result == self::TABLE);

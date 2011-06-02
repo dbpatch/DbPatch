@@ -44,7 +44,7 @@ class DbPatch_Task_Runner
     public function showHelp()
     {
         $writer = $this->getWriter();
-        $writer->line('usage: dbpatch [--version] [--help] [--config=<file>] <command> [<args>]')
+        $writer->line('usage: dbpatch [--version] [--help] [--config=<file>] [--color=false] <command> [<args>]')
             ->line()
             ->line('The commands are:')
             ->indent(2)->line('install    install the changelog table')

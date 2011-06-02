@@ -28,6 +28,19 @@ class DbPatch_Core_Console
                 if (isset($tmpArg[1])) {
                     $argValue = $tmpArg[1];
                 }
+
+                // parse boolean values
+                switch (strtolower($argValue)) {
+                    case 'yes':
+                    case 'true':
+                        $argValue = true;
+                        break;
+                    case 'no':
+                    case 'false':
+                        $argValue = false;
+                        break;
+                }
+
                 $options[$argName] = $argValue;
             } else {
                 $options[$argument] = $argument;

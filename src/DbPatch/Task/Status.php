@@ -19,7 +19,7 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
         $this->getWriter()->line()->line("applied patches (".self::LIMIT." latest)")->separate();
 
         if (count($patches) == 0) {
-             $this->getWriter()->line("no patches found");
+             $this->getWriter()->warning("no patches found");
         } else {
           foreach ($patches as $patch) {
               $this->writer->line(sprintf("%04d | %s | %s | %s",
