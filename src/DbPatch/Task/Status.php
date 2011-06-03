@@ -4,6 +4,12 @@
 class DbPatch_Task_Status extends DbPatch_Task_Abstract
 {
     const LIMIT = 10;
+
+    public function init()
+    {
+        $this->writer->setVerbose();
+        return parent::init();
+    }
     
     public function execute()
     {
@@ -98,7 +104,7 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
 
     public function showHelp()
     {
-        $this->getWriter()->line('status');
+        parent::showHelp('status');
     }
 
 

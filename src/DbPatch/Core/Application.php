@@ -12,16 +12,21 @@ class DbPatch_Core_Application
         $writer     = $this->getWriter();
         $runner     = $this->getTaskRunner($writer);
         $configFile = $console->getOptionValue('config', null);
-        $useColor   = $console->getOptionValue('color', true);
+        $useColor   = $console->getOptionValue('color', false);
+        $verbose    = $console->getOptionValue('verbose', false);
 
         if ($useColor) {
             $writer->setColor($this->getWriterColor());
         }
 
+        if ($verbose) {
+            $writer->setVerbose();
+        }
+
         try {
             $config  = $this->getConfig($configFile);
         } catch (Exception $e) {
-            $this->getWriter()->line($e->getMessage())->line();
+            $writer->error($e->getMessage())->line();
             $runner->showHelp();
             exit;
         }
@@ -29,7 +34,7 @@ class DbPatch_Core_Application
         $db = $this->getDb($config);
 
         if ($console->issetOption('version')) {
-            return $runner->showHelp();
+            return $runner->showVersion();
         }
 
         try {
@@ -38,10 +43,11 @@ class DbPatch_Core_Application
                 ->setConfig($config)
                 ->setDb($db)
                 ->setLogger($logger)
+                ->init()
                 ->execute();
                 
         } catch (Exception $e) {
-            $this->getWriter()->line($e->getMessage())->line();
+            $writer->error($e->getMessage())->line();
             $runner->showHelp();
             exit;
         }

@@ -9,6 +9,8 @@ class Dbpatch_Core_Writer
      */
     protected $_color = null;
 
+    protected $verbose = false;
+
     /**
      * Writer uses ANSI coloring when color object provided
      *
@@ -19,6 +21,14 @@ class Dbpatch_Core_Writer
     {
         $this->_color = $color;
 
+        return $this;
+    }
+
+    public function setVerbose($verbose = true)
+    {
+        if (is_bool($verbose)) {
+            $this->verbose = $verbose;
+        }
         return $this;
     }
 
@@ -46,9 +56,16 @@ class Dbpatch_Core_Writer
      * @param resource $stream
      * @return Dbpatch_Core_Writer
      */
-    public function line($message='', $stream = null)
+    public function line($message='')
     {
-        $this->output($message. PHP_EOL, $stream);
+        return $this->info($message);
+    }
+
+    public function info($message)
+    {
+        if ($this->verbose) {
+            $this->_message($message, 'info');
+        }
         return $this;
     }
 
@@ -110,14 +127,20 @@ class Dbpatch_Core_Writer
      * @param string $pallet
      * @return Dbpatch_Core_Writer
      */
-    public function _message($message, $pallet)
+    public function _message($message, $pallet = '')
     {
-        if ($this->_color !== null) {
+        if ($this->_color !== null && $pallet != '') {
             $message = $this->_color->pallet($pallet)
                 . $message . $this->_color->reset();
         }
+        $message .= PHP_EOL;
 
-        $this->line($message, STDERR);
+        $stream = null;
+
+        if ($pallet != 'info') {
+            $stream = STDERR;
+        }
+        $this->output($message, $stream);
 
         return $this;
     }

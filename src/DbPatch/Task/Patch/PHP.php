@@ -11,9 +11,12 @@ class DbPatch_Task_Patch_PHP extends DbPatch_Task_Patch_Abstract
 
     public function apply()
     {
+
         $db = $this->getDb();
         $writer = $this->getWriter();
         $phpFile = $this->filename;
+
+        $writer->line('apply patch: '. $this->basename);
 
         if (!file_exists($phpFile)) {
             $this->getWriter()->line(sprintf('php file %s doesn\'t exists', $phpFile));
@@ -42,7 +45,8 @@ class DbPatch_Task_Patch_PHP extends DbPatch_Task_Patch_Abstract
 
     public function create($description, $patchDirectory, $patchPrefix)
     {
-        $filename = $this->getFilename($patchPrefix, strtolower($this->getType()));
+        $patchNumberSize = $this->getPatchNumberSize($patchDirectory);
+        $filename = $this->getPatchFilename($patchPrefix, strtolower($this->getType()), $patchNumberSize);
         $content = '<?php'. PHP_EOL . '// ' . $description . PHP_EOL;
         $this->writeFile($patchDirectory . $filename, $content);
     }

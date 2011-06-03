@@ -35,6 +35,14 @@ abstract class DbPatch_Task_Abstract
     
     abstract public function execute();
 
+    public function init()
+    {
+        if (!$this->validateChangelog()) {
+            throw new Exception('Can\'t create changelog table');
+        }
+        return $this;
+    }
+
     public function setLogger(DbPatch_Core_Log $logger)
     {
         $this->logger = $logger;
@@ -181,9 +189,8 @@ abstract class DbPatch_Task_Abstract
         return true;
     }
 
-    public function getPatches($branch)
+    public function getPatches($branch, $searchPatchNumber = null)
     {
-        $this->writer->line('scanning patches...');
         $patchDirectory = $this->getPatchDirectory();
 
         if (!file_exists($patchDirectory)) {
@@ -215,11 +222,10 @@ abstract class DbPatch_Task_Abstract
             if (preg_match($pattern, $fileinfo->getFilename(), $matches)) {
                 $patchNumber = (int) $matches[1];
 
-
-                if ($this->isPatchApplied($patchNumber, $branch)) {
+                if ((!is_null($searchPatchNumber) && $searchPatchNumber != '*' && $patchNumber != $searchPatchNumber) ||
+                    is_null($searchPatchNumber) && $this->isPatchApplied($patchNumber, $branch)) {
                     continue;
                 }
-                
 
                 $filename = $patchDirectory . '/' . $fileinfo->getFilename();
                 $type = $matches[2];
@@ -285,7 +291,7 @@ abstract class DbPatch_Task_Abstract
 
     public function getPatch($patchNumber, $branch)
     {
-        $patches = $this->getPatches($branch);
+        $patches = $this->getPatches($branch, $patchNumber);
         if (array_key_exists($patchNumber, $patches)) {
             return $patches[$patchNumber];
         }
@@ -331,6 +337,7 @@ abstract class DbPatch_Task_Abstract
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
             $db->quoteIdentifier(self::TABLE)
         ));
+        $db->commit();
 
         if (! $this->changelogExists()) {
             return false;
@@ -342,32 +349,50 @@ abstract class DbPatch_Task_Abstract
         return true;
     }
 
-    /**
+     /**
      * Store patchfile entry to the changelog table
-     * @param array $patch
+     * @param array $patchFile
+     * @param string $description
      * @return void
      */
-    protected function addToChangelog($patch)
+    protected function addToChangelog($patchFile, $description=null)
     {
-        $this->getWriter()->line(sprintf(
-                        'added %s to the changelog ', $patch->basename));
+        $this->writer->line(sprintf(
+            'added %s to the changelog ', $patchFile->basename));
 
+        if ($description == null) {
+            $description = $patchFile->description;
+        }
         $db = $this->getDb();
 
+        $sql = sprintf("
+            INSERT INTO %s (patch_number, branch, completed, filename, description, hash)
+            VALUES(%d, %s, NOW(), %s, %s, %s)",
+            $db->quoteIdentifier(self::TABLE),
+            $patchFile->patch_number,
+            $db->quote($patchFile->branch),
+            $db->quote($patchFile->basename),
+            $db->quote($description),
+            $db->quote($patchFile->hash)
+        );
 
-        $db->query(sprintf("
-               INSERT INTO `%s` (patch_number, branch, completed, filename, description)
-               VALUES(%d, '%s', NOW(), '%s', '%s')",
-                           self::TABLE,
-                           $patch->patchNumber,
-                           $patch->branch,
-                           $patch->basename,
-                           $patch->description
-                   ));
-        
+        $db->query($sql);
         $db->commit();
     }
 
-    abstract function showHelp();
+    protected function showHelp($task)
+    {
+        $writer = $this->getWriter();
+        $writer->setVerbose();
+        $writer->line('dbpatch version ' . DbPatch_Core_Version::VERSION);
+        $writer->line('usage: dbpatch ' . $task . ' [<args>]')
+            ->line()
+            ->line('The args are:')
+            ->indent(2)->line('--config=<string>  Filename of the config file')
+            ->indent(2)->line('--branch=<string>  Branch name')
+            ->indent(2)->line('--color            Show colored output')
+            ->indent(2)->line('--verbose          Show output');
+
+    }
 
 }

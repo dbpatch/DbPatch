@@ -225,30 +225,68 @@ abstract class DbPatch_Task_Patch_Abstract
 
     public function show()
     {
-        echo "\n".file_get_contents($this->filename)."\n";
+        echo "\n" . file_get_contents($this->filename) . "\n";
     }
 
     protected function writeFile($filename, $content)
     {
-        if (!file_exists($filename)) {
+        if (!$this->fileExists($filename)) {
             $fp = fopen($filename, 'w');
             fwrite($fp, $content);
             fclose($fp);
-            $this->getWriter()->line('Created empty patch '.$filename);
+            $this->getWriter()->success('Created empty patch ' . $filename);
         } else {
-            $this->getWriter()->line('Patch '.$this->patchNumber . ' already exists!');
+            $this->getWriter()->error('Patch ' . $this->patchNumber . ' already exists!');
         }
 
     }
 
-    protected function getFilename($patchPrefix, $extension)
+    protected function fileExists($filename)
+    {
+        $filename2 = '';
+        if ($this->getType() == 'PHP') {
+            $filename2 = str_replace('.php', '.sql', $filename);
+        } else if ($this->getType() == 'SQL') {
+            $filename2 = str_replace('.sql', '.php', $filename);
+        }
+
+        return file_exists($filename) || file_exists($filename2);
+    }
+
+    protected function getPatchFilename($patchPrefix, $extension, $patchNumberSize = 4)
     {
         $branch = '';
         if ($this->branch != 'default') {
             $branch .= $this->branch . '-';
         }
-        $filename = $patchPrefix.'-'. $branch . str_pad($this->patchNumber, 3, '0', STR_PAD_LEFT).'.'. $extension;
+        $filename = $patchPrefix . '-' . $branch . str_pad($this->patchNumber, $patchNumberSize , '0', STR_PAD_LEFT) . '.' . $extension;
         return $filename;
+    }
+
+    protected function getPatchNumberSize($patchDirectory)
+    {
+        try {
+            $iterator = new DirectoryIterator($patchDirectory);
+        } catch (Exception $e) {
+            $this->writer->error($e->getMessage());
+            return 4;
+        }
+
+        $filename = '';
+        foreach ($iterator as $fileinfo) {
+            if ($fileinfo->isDot() || substr($fileinfo->getFilename(),0,1) == '.') {
+               continue;
+            }
+            $filename = $fileinfo->getFilename();
+            break;
+        }
+
+        $pattern = '/(\d{3,4})./';
+        if (preg_match($pattern, $filename, $matches)) {
+            return strlen($matches[1]);
+        }
+        return 4;
+
     }
 
 

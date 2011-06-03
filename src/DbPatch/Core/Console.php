@@ -33,6 +33,7 @@ class DbPatch_Core_Console
                 switch (strtolower($argValue)) {
                     case 'yes':
                     case 'true':
+                    case '':
                         $argValue = true;
                         break;
                     case 'no':
@@ -62,15 +63,16 @@ class DbPatch_Core_Console
     public function getTask()
     {
         $task = '';
-        
-        if (isset($this->arguments[0])) {
-            $task = $this->arguments[0];
-        }
 
-        if (strpos($task, '--') === false) {
-            return $task;
+        foreach ($this->arguments as $arg) {
+            if (strpos($arg, '--') === false) {
+                $task = $arg;
+                break;
+            }
+
         }
-        return '';
+        
+        return $task;
     }
 
     /**

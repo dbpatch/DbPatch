@@ -69,7 +69,7 @@ class Dbpatch_Core_Color
      */
     protected $_pallets = array(
         'error'   => array('grey', 'bold', 'red'),
-        'success' => array('black', 'bold', 'green'),
+        'success' => array('grey', 'bold', 'green'),
         'warning' => array('black', 'bold', 'brown'),
     );
 

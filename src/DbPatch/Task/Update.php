@@ -4,16 +4,12 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
 {
     public function execute()
     {
-        if (!$this->validateChangelog()) {
-            return;
-        }
-        
         $branch = $this->getBranch();
-        $force = ($this->console->issetOption('patch') && $this->console->getOptionValue('patch') == 1) ? true : false;
+        $force = ($this->console->issetOption('force')) ? true : false;
 
-        $lastPatchNumber = $this->getLastPatchNumber($branch);
+        $latestPatchNumber = $this->getLastPatchNumber($branch);
 
-        $this->writer->line('last patch number applied: '. $lastPatchNumber);
+        $this->writer->line('last patch number applied: '. $latestPatchNumber);
         $patchFiles = $this->getPatches($branch);
         
         if (count($patchFiles) == 0) {
@@ -28,15 +24,18 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
 
         $patchNumbersToSkip = $this->getPatchNumbersToSkip($this->console->getOptions(), $patchFiles);
 
+        if(count($patchNumbersToSkip)) {
+            $this->writer->line('Skip patchnumbers: '.implode(',', $patchNumbersToSkip));
+        }
+
         foreach ($patchFiles as $patchNr => $patchFile)
         {
-            /*
-            if (($patchFile['patch_number'] <> $latestPatchNumber + 1) && !$force) {
-                $this->error(
-                    sprintf('expected patch number %d instead of %d (%s). Use force=1 to override this check.',
+            if (($patchFile->patch_number <> $latestPatchNumber + 1) && !$force) {
+                $this->writer->error(
+                    sprintf('expected patch number %d instead of %d (%s). Use --force to override this check.',
                         $latestPatchNumber + 1,
-                        $patchFile['patch_number'],
-                        $patchFile['basename']
+                        $patchFile->patch_number,
+                        $patchFile->basename
                     )
                 );
                 return;
@@ -44,10 +43,11 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
 
 
             if (in_array($patchNr, $patchNumbersToSkip)) {
+                $this->writer->line('manually skiped patch '.$patchFile->basename);
                 $this->addToChangelog($patchFile, 'manually skipped');
+                $latestPatchNumber = $patchFile->patch_number;
                 continue;
             }
-            */
 
             $result = $patchFile->setDb($this->db)
                 ->setConfig($this->config)
@@ -58,10 +58,10 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
               return;
             }
 
-            //$this->addToChangelog($patchFile);
+            $this->addToChangelog($patchFile);
 
 
-            //$latestPatchNumber = $patchFile['patch_number'];
+            $latestPatchNumber = $patchFile->patch_number;
 
         }
     }
@@ -117,6 +117,8 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
         return $db->fetchAll($sql);
     }
 
+
+
     /**
      * Determine which patch numbers can be skipped
      * We may only skip numbers that are ready to apply
@@ -147,7 +149,11 @@ class DbPatch_Task_Update extends DbPatch_Task_Abstract
     
     public function showHelp()
     {
-        $this->getWriter()->line('update');
+        parent::showHelp('update');
+        $writer = $this->getWriter();
+        $writer
+            ->indent(2)->line('--skip=<int>       One or more patchnumbers seperated by a comma to skip')
+            ->indent(2)->line('--force            Force the update, and ignore missing patches')
+            ->line();
     }
-
 }

@@ -12,6 +12,7 @@ class DbPatch_Task_Patch_SQL extends DbPatch_Task_Patch_Abstract
 
     public function apply()
     {
+        $this->writer->line('apply patch: '. $this->basename);
         $content = file_get_contents($this->data['filename']);
         if ($content == '') {
             $this->writer->error(
@@ -71,7 +72,8 @@ class DbPatch_Task_Patch_SQL extends DbPatch_Task_Patch_Abstract
 
     public function create($description, $patchDirectory, $patchPrefix)
     {
-        $filename = $this->getFilename($patchPrefix, strtolower($this->getType()));
+        $patchNumberSize = $this->getPatchNumberSize($patchDirectory);
+        $filename = $this->getPatchFilename($patchPrefix, strtolower($this->getType()), $patchNumberSize);
         $content = '-- ' . $description . PHP_EOL;
         $this->writeFile($patchDirectory . $filename, $content);
     }

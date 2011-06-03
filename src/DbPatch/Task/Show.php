@@ -3,6 +3,12 @@
 
 class DbPatch_Task_Show extends DbPatch_Task_Abstract
 {
+    public function init()
+    {
+        $this->writer->setVerbose();
+        return parent::init();
+    }
+
     public function execute()
     {
         if ($this->console->issetOption('patch')) {
@@ -27,15 +33,20 @@ class DbPatch_Task_Show extends DbPatch_Task_Abstract
             return;
         }
         DbPatch_Task_Runner::showVersion();
-        $this->writer->line("Show patch $patchNumber (" . $patch->basename . "):");
-        $this->writer->line($patch->getHash());
+        $this->writer
+            ->line("Show patch $patchNumber (" . $patch->basename . "):")
+            ->line();
         $patch->show();
         return;
     }
 
     public function showHelp()
     {
-        $this->getWriter()->line('show');
+        parent::showHelp('show');
+
+        $writer = $this->getWriter();
+        $writer->indent(2)->line('--patch=<int>      Patchnumber to show')
+            ->line();
     }
 
 }

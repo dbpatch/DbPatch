@@ -8,7 +8,7 @@ class DbPatch_Task_Sync extends DbPatch_Task_Abstract
         $branches = $this->detectBranches();
 
         foreach ($branches as $branch) {
-            $patches = $this->getPatches($branch);
+            $patches = $this->getPatches($branch, '*');
 
             foreach ($patches as $patch) {
                 $this->addToChangelog($patch);
@@ -18,7 +18,7 @@ class DbPatch_Task_Sync extends DbPatch_Task_Abstract
 
     public function showHelp()
     {
-        $this->getWriter()->line('sync');
+       parent::showHelp('sync');
     }
 
 

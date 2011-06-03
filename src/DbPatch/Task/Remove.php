@@ -51,7 +51,7 @@ class DbPatch_Task_Remove extends DbPatch_Task_Abstract
         if (count($patchRecords) == 0) {
             $branchMsg = (empty($branchName) ? ""
                     : "for branch '$branchName' ");
-            $this->getWriter()->line("Patch $patchNumber not found {$branchMsg}in `" . self::TABLE . "` table");
+            $this->getWriter()->line("Patch $patchNumber not found {$branchMsg} in `" . self::TABLE . "` table");
         }
         else if (count($patchRecords) > 1) {
             // @todo this is not happening anymore ???????
@@ -77,8 +77,12 @@ class DbPatch_Task_Remove extends DbPatch_Task_Abstract
         }
     }
 
-    public function showHelp()
-    {
-        $this->getWriter()->line('remove');
-    }
+   public function showHelp()
+        {
+            parent::showHelp('remove');
+
+            $writer = $this->getWriter();
+            $writer->indent(2)->line('--patch=<int>      One or more patchnumbers seperated by a comma to remove')
+                ->line();
+        }
 }
