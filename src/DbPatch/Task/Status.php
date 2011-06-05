@@ -13,7 +13,7 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
     
     public function execute()
     {
-        $this->writer->line('Start DbPatch status');
+        $this->writer->version();
 
         $branches = $this->detectBranches();
 

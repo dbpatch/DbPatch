@@ -32,8 +32,9 @@ class DbPatch_Task_Show extends DbPatch_Task_Abstract
             $this->writer->error("no patchfile found for patch number: " . $patchNumber);
             return;
         }
-        DbPatch_Task_Runner::showVersion();
+
         $this->writer
+            ->version()
             ->line("Show patch $patchNumber (" . $patch->basename . "):")
             ->line();
         $patch->show();

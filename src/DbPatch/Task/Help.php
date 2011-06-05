@@ -17,11 +17,11 @@ class DbPatch_Task_Help extends DbPatch_Task_Abstract
                 return;
             }
         }
-        $this->getWriter()->line('Unknow action');
+        throw new Exception('Please provide a valid command');
     }
 
     public function showHelp()
     {
-        $this->getWriter()->line('help');
+        parent::showHelp('help');
     }
 }

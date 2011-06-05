@@ -109,6 +109,12 @@ class Dbpatch_Core_Writer
         return $this;
     }
 
+    public function version()
+    {
+        $this->line('DbPatch version ' . DbPatch_Core_Version::VERSION);
+
+    }
+
     /**
      * Indent output with spaces
      * @param int $spaces

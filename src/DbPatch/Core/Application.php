@@ -34,7 +34,8 @@ class DbPatch_Core_Application
         $db = $this->getDb($config);
 
         if ($console->issetOption('version')) {
-            return $runner->showVersion();
+            $writer->setVerbose()->version();
+            return;
         }
 
         try {
