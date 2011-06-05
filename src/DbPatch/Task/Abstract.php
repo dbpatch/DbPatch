@@ -256,7 +256,6 @@ abstract class DbPatch_Task_Abstract
     protected function detectBranches()
     {
         $branches = array(self::DEFAULT_BRANCH);
-        $patchDir = $this->getPatchDirectory();
 
         $patchDirectory = $this->getPatchDirectory();
         try {
@@ -274,7 +273,7 @@ abstract class DbPatch_Task_Abstract
             if ($fileinfo->isDot() || substr($fileinfo->getFilename(),0,1) == '.') {
                continue;
             }
-
+            
             if (preg_match($pattern, $fileinfo->getFilename(), $matches)) {
 
                 $branch = $matches[1];
