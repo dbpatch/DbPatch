@@ -51,6 +51,7 @@ class DbPatch_Core_Application
             $runner->showHelp();
             exit;
         }
+        return;
     }
 
     protected function getLogger()

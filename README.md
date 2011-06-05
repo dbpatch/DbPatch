@@ -3,8 +3,13 @@ README
 
 What is DbPatch?
 ----------------
+DbPatch is a commandline utility to manage/track sql/php patch files.
 
 
+TODO
+----
+- Fix doc blocks
+- Detect if applied patches are changed on disk
 
 Requirements
 ------------
@@ -19,7 +24,8 @@ How to use DbPatch?
 
 Documentation
 -------------
-For more detaild information you can check our online documentation at http://
+For more detaild information you can check our online documentation at
+https://github.com/sndpl/DbPatch/wiki
 
 
 Contact

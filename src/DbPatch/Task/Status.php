@@ -21,8 +21,9 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
             $this->showPatchesToApply($branch);
         }
 
-        $patches = $this->getAppliedPatches(self::LIMIT);
-        $this->getWriter()->line()->line("applied patches (".self::LIMIT." latest)")->separate();
+        $limit = $this->getLimit();
+        $patches = $this->getAppliedPatches();
+        $this->getWriter()->line()->line("applied patches (".$limit." latest)")->separate();
 
         if (count($patches) == 0) {
              $this->getWriter()->warning("no patches found")->line();
@@ -70,10 +71,16 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
         }
     }
 
+    protected function getLimit()
+    {
+        $limit = $this->config->get('limit', self::LIMIT);
+        return $limit;
+    }
 
 
 
-    protected function getAppliedPatches($limit, $branch='')
+
+    protected function getAppliedPatches($branch='')
     {
         $db = $this->getDb();
         
@@ -81,6 +88,7 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
         if ($branch != '') {
             $where = 'WHERE branch =\''.$db->escapeSQL($branch).'\'';
         }
+        $limit = $this->getLimit();
 
         $sql = sprintf("
             SELECT
@@ -96,7 +104,7 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
             self::DEFAULT_BRANCH,
             self::TABLE,
             $where,
-            (int) self::LIMIT
+            (int) $limit
         );
 
         return $db->fetchAll($sql);
