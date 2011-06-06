@@ -34,9 +34,8 @@ class DbPatch_Task_Show extends DbPatch_Task_Abstract
         }
 
         $this->writer
-            ->version()
-            ->line("Show patch $patchNumber (" . $patch->basename . "):")
-            ->line();
+            ->line("show patch $patchNumber (" . $patch->basename . "):")
+            ->separate();
         $patch->show();
         return;
     }

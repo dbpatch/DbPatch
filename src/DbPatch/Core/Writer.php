@@ -109,10 +109,14 @@ class Dbpatch_Core_Writer
         return $this;
     }
 
+    /**
+     * Outputs the version of DbPatch
+     * @return Dbpatch_Core_Writer
+     */
     public function version()
     {
         $this->line('DbPatch version ' . DbPatch_Core_Version::VERSION);
-
+        return $this;
     }
 
     /**
