@@ -10,7 +10,7 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
         $argv = array();
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertNull($console->getTask());
+        $this->assertEquals('', $console->getTask());
     }
     
     public function testGetTaskStrippingOfTheProgname()
@@ -18,7 +18,7 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
         $argv = array('./dbpatch.php');
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertNull($console->getTask());
+        $this->assertEquals('', $console->getTask());
     }
     
     public function testGetTask()
@@ -34,7 +34,16 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
         $argv = array('./dbpatch.php', 'update', '--force');
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertEquals(array('force' => ''), $console->getOptions());
+        $this->assertEquals(array('force' => true), $console->getOptions());
+    }
+
+    public function testHelpTask()
+    {
+        $argv = array('./dbpatch.php', 'help', 'update');
+        
+        $console = new DbPatch_Core_Console($argv);
+        $this->assertEquals('help', $console->getTask());
+        $this->assertEquals(array('update' => 'update'), $console->getOptions());
     }
     
     public function testGetOptionsWithNoOptions()

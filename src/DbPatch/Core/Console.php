@@ -19,7 +19,7 @@ class DbPatch_Core_Console
     protected function parseOptions()
     {
         $options = array();
-        foreach ($this->arguments as $argument) {
+        foreach ($this->arguments as $key => $argument) {
             if (substr($argument, 0, 2) == '--') {
 
                 $tmpArg = explode('=', $argument);
@@ -43,7 +43,7 @@ class DbPatch_Core_Console
                 }
 
                 $options[$argName] = $argValue;
-            } else {
+            } elseif ($key > 0) {
                 $options[$argument] = $argument;
             }
         }
@@ -93,7 +93,8 @@ class DbPatch_Core_Console
         return $default;
     }
 
-    public function issetOption($option) {
+    public function issetOption($option) 
+    {
         return array_key_exists($option, $this->options);
     }
 }
