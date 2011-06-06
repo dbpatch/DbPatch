@@ -44,7 +44,7 @@ class DbPatch_Task_Runner
     public function showHelp()
     {
         $writer = $this->getWriter();
-        $writer->setVerbose()->line()->version();
+        $writer->line()->version();
         $writer->line('usage: dbpatch [--version] [--help] [--config=<file>] [--color] <command> [<args>]')
             ->line()
             ->line('The commands are:')

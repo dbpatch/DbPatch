@@ -382,15 +382,13 @@ abstract class DbPatch_Task_Abstract
     protected function showHelp($task)
     {
         $writer = $this->getWriter();
-        $writer->setVerbose();
-        $writer->line('dbpatch version ' . DbPatch_Core_Version::VERSION);
-        $writer->line('usage: dbpatch ' . $task . ' [<args>]')
+        $writer->version()
+            ->line('usage: dbpatch ' . $task . ' [<args>]')
             ->line()
             ->line('The args are:')
             ->indent(2)->line('--config=<string>  Filename of the config file')
             ->indent(2)->line('--branch=<string>  Branch name')
-            ->indent(2)->line('--color            Show colored output')
-            ->indent(2)->line('--verbose          Show output');
+            ->indent(2)->line('--color            Show colored output');
 
     }
 

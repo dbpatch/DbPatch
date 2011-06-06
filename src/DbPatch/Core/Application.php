@@ -17,14 +17,9 @@ class DbPatch_Core_Application
         $runner     = $this->getTaskRunner($writer);
         $configFile = $console->getOptionValue('config', null);
         $useColor   = $console->getOptionValue('color', false);
-        $verbose    = $console->getOptionValue('verbose', false);
 
         if ($useColor) {
             $writer->setColor($this->getWriterColor());
-        }
-
-        if ($verbose) {
-            $writer->setVerbose();
         }
 
         // Load the right config file
@@ -39,7 +34,7 @@ class DbPatch_Core_Application
         $db = $this->getDb($config);
 
         if ($console->issetOption('version')) {
-            $writer->setVerbose()->version();
+            $writer->version();
             return;
         }
 

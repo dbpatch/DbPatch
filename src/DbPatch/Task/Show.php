@@ -3,12 +3,6 @@
 
 class DbPatch_Task_Show extends DbPatch_Task_Abstract
 {
-    public function init()
-    {
-        $this->writer->setVerbose();
-        return parent::init();
-    }
-
     public function execute()
     {
         if ($this->console->issetOption('patch')) {

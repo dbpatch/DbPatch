@@ -5,12 +5,6 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
 {
     const LIMIT = 10;
 
-    public function init()
-    {
-        $this->writer->setVerbose();
-        return parent::init();
-    }
-    
     public function execute()
     {
         $this->writer->version();
@@ -62,7 +56,7 @@ class DbPatch_Task_Status extends DbPatch_Task_Abstract
                   $patch->description));
           }
 
-          $line = "use './dbpatch.sh --verbose update";
+          $line = "use 'dbpatch update";
           if ($branch <> self::DEFAULT_BRANCH) {
               $line .= " branch={$branch}";
           }

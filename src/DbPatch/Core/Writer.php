@@ -9,8 +9,6 @@ class Dbpatch_Core_Writer
      */
     protected $_color = null;
 
-    protected $verbose = false;
-
     /**
      * Writer uses ANSI coloring when color object provided
      *
@@ -21,14 +19,6 @@ class Dbpatch_Core_Writer
     {
         $this->_color = $color;
 
-        return $this;
-    }
-
-    public function setVerbose($verbose = true)
-    {
-        if (is_bool($verbose)) {
-            $this->verbose = $verbose;
-        }
         return $this;
     }
 
@@ -63,9 +53,7 @@ class Dbpatch_Core_Writer
 
     public function info($message)
     {
-        if ($this->verbose) {
-            $this->_message($message, 'info');
-        }
+        $this->_message($message, 'info');
         return $this;
     }
 
