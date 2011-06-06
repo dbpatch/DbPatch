@@ -72,7 +72,7 @@ class DbPatch_Core_Application
     }
 
     /**
-     * Initia
+     * Creates the task runner with a specific CLI writer
      *
      * @param DbPatch_Core_Writer $writer 
      * @return DbPatch_Task_Runner
