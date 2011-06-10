@@ -1,7 +1,7 @@
 <?php
 
 
-class DbPatch_Task_Remove extends DbPatch_Task_Abstract
+class DbPatch_Command_Remove extends DbPatch_Command_Abstract
 {
     public function execute()
     {

@@ -1,7 +1,7 @@
 <?php
 
 
-class DbPatch_Task_Status extends DbPatch_Task_Abstract
+class DbPatch_Command_Status extends DbPatch_Command_Abstract
 {
     const LIMIT = 10;
 

@@ -1,5 +1,5 @@
 <?php
-class DbPatch_Task_Patch_PHP extends DbPatch_Task_Patch_Abstract
+class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
 {
     protected $data = array(
         'filename' => null,

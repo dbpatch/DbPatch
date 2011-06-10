@@ -1,7 +1,7 @@
 <?php
 
 
-class DbPatch_Task_Create extends DbPatch_Task_Abstract
+class DbPatch_Command_Create extends DbPatch_Command_Abstract
 {
     public function execute()
     {
@@ -12,7 +12,7 @@ class DbPatch_Task_Create extends DbPatch_Task_Abstract
             throw new exception ('Invalid patch type!');
         }
 
-        $patch = DbPatch_Task_Patch::factory($type);
+        $patch = DbPatch_Command_Patch::factory($type);
         $patch->setWriter($this->getWriter());
 
         if (is_null($patchNumber)) {

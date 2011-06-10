@@ -1,7 +1,7 @@
 <?php
 /**
  * The core application object.
- * Setup different objects and fireup the task runner
+ * Setup different objects and fireup the command runner
  */
 class DbPatch_Core_Application
 {
@@ -14,7 +14,7 @@ class DbPatch_Core_Application
         $console    = $this->getConsole($_SERVER['argv']);
         $logger     = $this->getLogger();
         $writer     = $this->getWriter();
-        $runner     = $this->getTaskRunner($writer);
+        $runner     = $this->getCommandRunner($writer);
         $configFile = $console->getOptionValue('config', null);
         $useColor   = $console->getOptionValue('color', false);
 
@@ -38,10 +38,10 @@ class DbPatch_Core_Application
             return;
         }
 
-        // Finally execute the right task
+        // Finally execute the right command
         try {
-            $task = $console->getTask();
-            $runner->getTask($task, $console)
+            $command = $console->getCommand();
+            $runner->getCommand($command, $console)
                 ->setConfig($config)
                 ->setDb($db)
                 ->setLogger($logger)
@@ -67,14 +67,14 @@ class DbPatch_Core_Application
     }
 
     /**
-     * Creates the task runner with a specific CLI writer
+     * Creates the command runner with a specific CLI writer
      *
      * @param DbPatch_Core_Writer $writer 
-     * @return DbPatch_Task_Runner
+     * @return DbPatch_Command_Runner
      */
-    protected function getTaskRunner($writer)
+    protected function getCommandRunner($writer)
     {
-        return new DbPatch_Task_Runner($writer);
+        return new DbPatch_Command_Runner($writer);
     }
 
     /**

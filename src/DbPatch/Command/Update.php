@@ -1,6 +1,6 @@
 <?php
 
-class DbPatch_Task_Update extends DbPatch_Task_Abstract
+class DbPatch_Command_Update extends DbPatch_Command_Abstract
 {
     public function execute()
     {

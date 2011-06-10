@@ -56,23 +56,23 @@ class DbPatch_Core_Console
     }
 
     /**
-     * Returns the task parameter from the command line
+     * Returns the command parameter from the command line
      *
      * @return string
      */
-    public function getTask()
+    public function getCommand()
     {
-        $task = '';
+        $command = '';
 
         foreach ($this->arguments as $arg) {
             if (strpos($arg, '--') === false) {
-                $task = $arg;
+                $command = $arg;
                 break;
             }
 
         }
         
-        return $task;
+        return $command;
     }
 
     /**

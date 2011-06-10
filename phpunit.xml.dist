@@ -3,8 +3,8 @@
     <testsuite name="Core">
       <directory>tests/src/DbPatch/Core</directory>
     </testsuite>
-    <testsuite name="Task">
-      <directory>tests/src/DbPatch/Task</directory>
+    <testsuite name="Command">
+      <directory>tests/src/DbPatch/Command</directory>
     </testsuite>
   </testsuites>
   <filter>
