@@ -8,7 +8,10 @@ class DbPatch_Command_Runner
 
     static public function getValidCommands()
     {
-        return array('help', 'create', 'remove', 'show', 'status', 'sync', 'update', 'dump');
+        return array(
+            'help', 'create', 'remove', 'show',
+            'status', 'sync', 'update', 'dump'
+        );
 
     }
 
