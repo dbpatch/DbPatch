@@ -1,5 +1,5 @@
 <?php
-abstract class DbPatch_Task_Patch_Abstract
+abstract class DbPatch_Command_Patch_Abstract
 {
 
     protected $db = null;

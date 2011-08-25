@@ -5,28 +5,28 @@
  */
 class ConsoleTest extends PHPUnit_Framework_TestCase
 {
-    public function testGetTaskWithNoArgv()
+    public function testGetCommandWithNoArgv()
     {
         $argv = array();
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertEquals('', $console->getTask());
+        $this->assertEquals('', $console->getCommand());
     }
     
-    public function testGetTaskStrippingOfTheProgname()
+    public function testGetCommandStrippingOfTheProgname()
     {
         $argv = array('./dbpatch.php');
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertEquals('', $console->getTask());
+        $this->assertEquals('', $console->getCommand());
     }
     
-    public function testGetTask()
+    public function testGetCommand()
     {
         $argv = array('./dbpatch.php', 'update');
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertEquals('update', $console->getTask());
+        $this->assertEquals('update', $console->getCommand());
     }
     
     public function testGetOptions()
@@ -37,12 +37,12 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('force' => true), $console->getOptions());
     }
 
-    public function testHelpTask()
+    public function testHelpCommand()
     {
         $argv = array('./dbpatch.php', 'help', 'update');
         
         $console = new DbPatch_Core_Console($argv);
-        $this->assertEquals('help', $console->getTask());
+        $this->assertEquals('help', $console->getCommand());
         $this->assertEquals(array('update' => 'update'), $console->getOptions());
     }
     

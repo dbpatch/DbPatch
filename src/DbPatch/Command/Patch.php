@@ -1,9 +1,9 @@
 <?php
-class DbPatch_Task_Patch
+class DbPatch_Command_Patch
 {
     static public function factory($type)
     {
-        $class = 'DbPatch_Task_Patch_'.strtoupper($type);
+        $class = 'DbPatch_Command_Patch_'.strtoupper($type);
         return new $class;
     }
 }

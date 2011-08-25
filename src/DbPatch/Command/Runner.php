@@ -1,12 +1,12 @@
 <?php
 /**
- * Handle all the available tasks
+ * Handle all the available commands
  */ 
-class DbPatch_Task_Runner
+class DbPatch_Command_Runner
 {
     protected $writer = null;
 
-    static public function getValidTasks()
+    static public function getValidCommands()
     {
         return array('help', 'create', 'remove', 'show', 'status', 'sync', 'update', 'dump');
 
@@ -22,23 +22,23 @@ class DbPatch_Task_Runner
         return $this->writer;
     }
 
-    public function getTask($task, $console)
+    public function getCommand($command, $console)
     {
-        if (empty($task) || !in_array($task, self::getValidTasks())) {
+        if (empty($command) || !in_array($command, self::getValidCommands())) {
             throw new Exception('Please provide a valid command');
         }
 
-        $class = 'DbPatch_Task_' . ucfirst(strtolower($task));
+        $class = 'DbPatch_Command_' . ucfirst(strtolower($command));
 
         try {
-            $task = new $class;
-            $task->setWriter($this->getWriter())
+            $command = new $class;
+            $command->setWriter($this->getWriter())
                 ->setConsole($console);
 
         } catch (Exception $e) {
-            throw new Exception('Unknown task: '.$task);
+            throw new Exception('Unknown command: '.$command);
         }
-        return $task;
+        return $command;
     }
     
     public function showHelp()

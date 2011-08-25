@@ -1,6 +1,6 @@
 <?php
 
-abstract class DbPatch_Task_Abstract
+abstract class DbPatch_Command_Abstract
 {
     const DEFAULT_BRANCH = 'default';
     const TABLE = 'db_changelog';
@@ -230,7 +230,7 @@ abstract class DbPatch_Task_Abstract
                 $filename = $patchDirectory . '/' . $fileinfo->getFilename();
                 $type = $matches[2];
 
-                $patch = DbPatch_Task_Patch::factory($type);
+                $patch = DbPatch_Command_Patch::factory($type);
 
                 $patch->loadFromArray(
                     array(
@@ -379,11 +379,11 @@ abstract class DbPatch_Task_Abstract
         $db->commit();
     }
 
-    protected function showHelp($task)
+    protected function showHelp($command)
     {
         $writer = $this->getWriter();
         $writer->version()
-            ->line('usage: dbpatch ' . $task . ' [<args>]')
+            ->line('usage: dbpatch ' . $command . ' [<args>]')
             ->line()
             ->line('The args are:')
             ->indent(2)->line('--config=<string>  Filename of the config file')

@@ -13,7 +13,8 @@ see docs/TODO
 Requirements
 ------------
 DbPatch requires the following:
-- PHP 5.1.x
+- PHP 5.1.x or higher
+- MySQL
 
 
 Documentation
