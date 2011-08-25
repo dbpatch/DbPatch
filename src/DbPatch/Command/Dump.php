@@ -1,7 +1,7 @@
 <?php
 
 
-class DbPatch_Task_Dump extends DbPatch_Task_Abstract
+class DbPatch_Command_Dump extends DbPatch_Command_Abstract
 {
     public function execute()
     {
@@ -11,7 +11,7 @@ class DbPatch_Task_Dump extends DbPatch_Task_Abstract
             $filename = $this->console->getOptionValue('file', null);
         }
         if(is_null($filename)) {
-            $filename = $database . '.sql';
+            $filename = $database . '_' . date('Ymd_Hi'). '.sql';
         }
 
         $this->writer->line('Dumping database '.$database. ' to file '.$filename);
