@@ -10,6 +10,7 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
         if ($this->console->issetOption('file')) {
             $filename = $this->console->getOptionValue('file', null);
         }
+        
         if(is_null($filename)) {
             $filename = $database . '_' . date('Ymd_Hi'). '.sql';
         }
