@@ -1,17 +1,94 @@
 <?php
+/**
+ * DbPatch
+ *
+ * Copyright (c) 2011, Sandy Pleyte.
+ * Copyright (c) 2010-2011, Martijn de Letter.
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ *  * Neither the name of the authors nor the names of his
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package DbPatch
+ * @subpackage Command_Patch
+ * @author Sandy Pleyte
+ * @author Martijn de Letter
+ * @copyright 2011 Sandy Pleyte
+ * @copyright 2010-2011 Martijn de Letter
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @link http://www.github.com/sndpl/DbPatch
+ * @since File available since Release 1.0.0
+ */
+
+/**
+ * Abstract Patch file
+ * 
+ * @package DbPatch
+ * @subpackage Command_Patch
+ * @author Sandy Pleyte
+ * @author Martijn de Letter
+ * @copyright 2011 Sandy Pleyte
+ * @copyright 2010-2011 Martijn de Letter
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @link http://www.github.com/sndpl/DbPatch
+ * @since File available since Release 1.0.0
+ */
 abstract class DbPatch_Command_Patch_Abstract
 {
 
+    /**
+     * @var null|\Zend_Db_Adapter_Abstract
+     */
     protected $db = null;
 
+    /**
+     * @var null|DbPatch_Core_Writer
+     */
     protected $writer = null;
 
+    /**
+     * @var null|DbPatch_Core_Config
+     */
     protected $config = null;
-    
+
+    /**
+     * @var array
+     */
+    protected $data = array();
+
     /**
      * Creates a new value object
+     * 
      * @param array $values the values to fill the value object with.
      * If left empty we're creating an empty value object.
+     * @return void
      */
     public function __construct(Array $values = null)
     {
@@ -20,13 +97,25 @@ abstract class DbPatch_Command_Patch_Abstract
         }
     }
 
+    /**
+     * @abstract
+     * @return void
+     */
     abstract function apply();
+
+    /**
+     * @abstract
+     * @return void
+     */
+    abstract function getType();
 
     /**
      * Load the values from an array provided.
      *
+     * @throws Exception
      * @param array $values the values we're using to set the values in the
      * value object
+     * @return void
      */
     public function loadFromArray($values)
     {
@@ -50,6 +139,7 @@ abstract class DbPatch_Command_Patch_Abstract
      *
      * @param string $name name of the property
      * @param mixed $value the value
+     * @throws Exception
      */
     public function __set($name, $value)
     {
@@ -72,9 +162,11 @@ abstract class DbPatch_Command_Patch_Abstract
     }
 
     /**
-     * Translates a camel case string into a string with underscores (e.g. firstName -&gt; first_name)
-     * @param    string   $str    String in camel case format
-     * @return    string            $str Translated into underscore format
+     * Translates a camel case string into a string with
+     * underscores (e.g. firstName -&gt; first_name)
+     *
+     * @param string $str String in camel case format
+     * @return string $str Translated into underscore format
      */
     protected function from_camel_case($str)
     {
@@ -84,10 +176,12 @@ abstract class DbPatch_Command_Patch_Abstract
     }
 
     /**
-     * Translates a string with underscores into camel case (e.g. first_name -&gt; firstName)
-     * @param    string   $str                     String in underscore format
-     * @param    bool     $capitalise_first_char   If true, capitalise the first char in $str
-     * @return   string                              $str translated into camel caps
+     * Translates a string with underscores into camel case
+     * (e.g. first_name -&gt; firstName)
+     *
+     * @param string $str String in underscore format
+     * @param bool $capitalise_first_char If true, capitalise the first char in $str
+     * @return string $str translated into camel caps
      */
     protected function to_camel_case($str, $capitalise_first_char = false)
     {
@@ -101,6 +195,7 @@ abstract class DbPatch_Command_Patch_Abstract
     /**
      * Returns the value requested.
      *
+     * @throws Exception
      * @param string $name the name of the property
      * @return mixed the value
      */
@@ -122,6 +217,13 @@ abstract class DbPatch_Command_Patch_Abstract
         throw new Exception('[GET] Property ' . $name . '/' . $key . ' is not implemented for class ' . get_class($this));
     }
 
+    /**
+     * Check if a value isset
+     * 
+     * @throws Exception
+     * @param string $name Name of the property
+     * @return bool
+     */
     public function __isset($name)
     {
         $name = trim($name);
@@ -144,6 +246,7 @@ abstract class DbPatch_Command_Patch_Abstract
 
     /**
      * Returns the objects values as an array.
+     *
      * @return array
      */
     public function toArray()
@@ -153,6 +256,7 @@ abstract class DbPatch_Command_Patch_Abstract
 
     /**
      * Returns the field names of the data array.
+     *
      * @return array
      */
     public function getFields()
@@ -160,6 +264,10 @@ abstract class DbPatch_Command_Patch_Abstract
         return array_keys($this->data);
     }
 
+    /**
+     * @param \Zend_Db_Adapter_Abstract $db
+     * @return DbPatch_Command_Patch_Abstract
+     */
     public function setDb($db)
     {
         $this->db = $db;
@@ -167,30 +275,45 @@ abstract class DbPatch_Command_Patch_Abstract
     }
 
     /**
-     * @return null|Zend_Db
+     * @return null|\Zend_Db_Adapter_Abstract
      */
     public function getDb()
     {
         return $this->db;
 
     }
+
+    /**
+     * @param DbPatch_Core_Writer $writer
+     * @return DbPatch_Command_Patch_Abstract
+     */
     public function setWriter($writer)
     {
         $this->writer = $writer;
         return $this;
     }
 
+    /**
+     * @return DbPatch_Core_Writer|null
+     */
     public function getWriter()
     {
         return $this->writer;
     }
 
+    /**
+     * @param DbPatch_Core_Config $config
+     * @return DbPatch_Command_Patch_Abstract
+     */
     public function setConfig($config)
     {
         $this->config = $config;
         return $this;
     }
 
+    /**
+     * @return DbPatch_Core_Config|null
+     */
     public function getConfig()
     {
         return $this->config;
@@ -198,6 +321,7 @@ abstract class DbPatch_Command_Patch_Abstract
 
     /**
      * Extract the first line of comment out of a patch file
+     *
      * @param int $lineNumber Line number where the comment is
      * @return string
      */
@@ -208,8 +332,7 @@ abstract class DbPatch_Command_Patch_Abstract
         $comment = '';
 
         $pattern = '/^\s*(\/\/|\/\*|\#|-- )\s?(.*)$/';
-        if (preg_match($pattern, $line, $matches))
-        {
+        if (preg_match($pattern, $line, $matches)) {
             $comment = trim(str_replace('*/', '', $matches[2]));
             if (substr($comment, 0, 5) == '-----') {
                 $comment = '';
@@ -218,16 +341,33 @@ abstract class DbPatch_Command_Patch_Abstract
         return $comment;
     }
 
+    /**
+     * Retrieve a file hash
+     *
+     * @return string
+     */
     public function getHash()
     {
         return hash_file('crc32', $this->filename);
     }
 
+    /**
+     * Echo contents of the patch
+     * 
+     * @return void
+     */
     public function show()
     {
         echo "\n" . file_get_contents($this->filename) . "\n";
     }
 
+    /**
+     * Create empty patch
+     *
+     * @param string $filename
+     * @param string $content
+     * @return void
+     */
     protected function writeFile($filename, $content)
     {
         if (!$this->fileExists($filename)) {
@@ -241,6 +381,10 @@ abstract class DbPatch_Command_Patch_Abstract
 
     }
 
+    /**
+     * @param string $filename
+     * @return bool
+     */
     protected function fileExists($filename)
     {
         $filename2 = '';
@@ -253,16 +397,26 @@ abstract class DbPatch_Command_Patch_Abstract
         return file_exists($filename) || file_exists($filename2);
     }
 
+    /**
+     * @param string $patchPrefix
+     * @param string $extension
+     * @param int $patchNumberSize
+     * @return string
+     */
     protected function getPatchFilename($patchPrefix, $extension, $patchNumberSize = 4)
     {
         $branch = '';
         if ($this->branch != 'default') {
             $branch .= $this->branch . '-';
         }
-        $filename = $patchPrefix . '-' . $branch . str_pad($this->patchNumber, $patchNumberSize , '0', STR_PAD_LEFT) . '.' . $extension;
+        $filename = $patchPrefix . '-' . $branch . str_pad($this->patchNumber, $patchNumberSize, '0', STR_PAD_LEFT) . '.' . $extension;
         return $filename;
     }
 
+    /**
+     * @param string $patchDirectory
+     * @return int
+     */
     protected function getPatchNumberSize($patchDirectory)
     {
         try {
@@ -274,8 +428,8 @@ abstract class DbPatch_Command_Patch_Abstract
 
         $filename = '';
         foreach ($iterator as $fileinfo) {
-            if ($fileinfo->isDot() || substr($fileinfo->getFilename(),0,1) == '.') {
-               continue;
+            if ($fileinfo->isDot() || substr($fileinfo->getFilename(), 0, 1) == '.') {
+                continue;
             }
             $filename = $fileinfo->getFilename();
             break;

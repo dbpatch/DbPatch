@@ -1,11 +1,69 @@
 <?php
 /**
- * Outputs/Formats messages to the console
+ * DbPatch
+ *
+ * Copyright (c) 2011, Sandy Pleyte.
+ * Copyright (c) 2010-2011, Martijn de Letter.
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ *  * Neither the name of the authors nor the names of his
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package DbPatch
+ * @subpackage Core
+ * @author Sandy Pleyte
+ * @author Martijn de Letter
+ * @copyright 2011 Sandy Pleyte
+ * @copyright 2010-2011 Martijn de Letter
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @link http://www.github.com/sndpl/DbPatch
+ * @since File available since Release 1.0.0
  */
-class Dbpatch_Core_Writer
+
+/**
+ * Outputs/Formats messages to the console
+ *
+ * @package DbPatch
+ * @subpackage Core
+ * @author Sandy Pleyte
+ * @author Martijn de Letter
+ * @copyright 2011 Sandy Pleyte
+ * @copyright 2010-2011 Martijn de Letter
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @link http://www.github.com/sndpl/DbPatch
+ * @since File available since Release 1.0.0
+ */
+class DbPatch_Core_Writer
 {
     /**
-     * @var DbPatch_Core_Color $_color
+     * @var DbPatch_Core_Color
      */
     protected $_color = null;
 
@@ -24,12 +82,13 @@ class Dbpatch_Core_Writer
 
     /**
      * Outputs a message to the console
+     *
      * @param string $message
      * @param resource $stream OPTIONAL, writes to
      *                 standard output by default
-     * @return Dbpatch_Core_Writer
+     * @return DbPatch_Core_Writer
      */
-    public function output($message='', $stream = null)
+    public function output($message = '', $stream = null)
     {
         if ($stream === null) {
             $stream = STDOUT;
@@ -44,13 +103,19 @@ class Dbpatch_Core_Writer
      * Outputs a message with a new line
      * @param string $message
      * @param resource $stream
-     * @return Dbpatch_Core_Writer
+     * @return DbPatch_Core_Writer
      */
-    public function line($message='')
+    public function line($message = '')
     {
         return $this->info($message);
     }
 
+    /**
+     * Write an info message
+     *
+     * @param string $message
+     * @return DbPatch_Core_Writer
+     */
     public function info($message)
     {
         $this->_message($message, 'info');
@@ -59,8 +124,9 @@ class Dbpatch_Core_Writer
 
     /**
      * Write an error messages
+     *
      * @param  string $message
-     * @return Dbpatch_Core_Writer
+     * @return DbPatch_Core_Writer
      */
     public function error($message)
     {
@@ -69,8 +135,9 @@ class Dbpatch_Core_Writer
 
     /**
      * Write an success messages
+     *
      * @param  string $message
-     * @return Dbpatch_Core_Writer
+     * @return DbPatch_Core_Writer
      */
     public function success($message)
     {
@@ -79,8 +146,9 @@ class Dbpatch_Core_Writer
 
     /**
      * Write an warning messages
+     *
      * @param  string $message
-     * @return Dbpatch_Core_Writer
+     * @return DbPatch_Core_Writer
      */
     public function warning($message)
     {
@@ -89,7 +157,8 @@ class Dbpatch_Core_Writer
 
     /**
      * Separate the output by outputting a dashed line
-     * @return Dbpatch_Core_Writer
+     *
+     * @return DbPatch_Core_Writer
      */
     public function separate()
     {
@@ -99,7 +168,8 @@ class Dbpatch_Core_Writer
 
     /**
      * Outputs the version of DbPatch
-     * @return Dbpatch_Core_Writer
+     *
+     * @return DbPatch_Core_Writer
      */
     public function version()
     {
@@ -109,8 +179,9 @@ class Dbpatch_Core_Writer
 
     /**
      * Indent output with spaces
+     *
      * @param int $spaces
-     * @return Dbpatch_Core_Writer
+     * @return DbPatch_Core_Writer
      */
     public function indent($spaces = 4)
     {
@@ -120,16 +191,17 @@ class Dbpatch_Core_Writer
 
 
     /**
-     * Write an optionally colored messages
-     * @param  string $message
+     * Write an optionally colored message
+     * 
+     * @param string $message
      * @param string $pallet
-     * @return Dbpatch_Core_Writer
+     * @return DbPatch_Core_Writer
      */
     public function _message($message, $pallet = '')
     {
         if ($this->_color !== null && $pallet != '') {
             $message = $this->_color->pallet($pallet)
-                . $message . $this->_color->reset();
+                       . $message . $this->_color->reset();
         }
         $message .= PHP_EOL;
 
