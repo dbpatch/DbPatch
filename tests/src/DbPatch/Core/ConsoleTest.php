@@ -86,4 +86,12 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($console->issetOption('force'));
         $this->assertFalse($console->issetOption('bogus'));
     }
+
+    public function testBoolOptions()
+    {
+        $argv = array('./dbpatch.php', 'update', '--force=true', '--skip=false');
+        $console = new DbPatch_Core_Console($argv);
+        $this->assertTrue($console->getOptionValue('force'));
+        $this->assertFalse($console->getOptionValue('skip'));
+    }
 }
