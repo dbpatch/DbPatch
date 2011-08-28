@@ -98,5 +98,5 @@ in parallel using a maximum of 2 threads. -->
   </target>
 
   <!--<target name="build" depends="clean,parallelTasks,phpunit,phpcb" />-->
-  <target name="build" depends="clean,parallelTasks" />
+  <target name="build" depends="clean,parallelTasks,phpunit" />
 </project>
