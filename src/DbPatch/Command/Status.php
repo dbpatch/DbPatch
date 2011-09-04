@@ -80,21 +80,53 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
             $this->showPatchesToApply($branch);
         }
 
-        $limit = $this->getLimit();
         $patches = $this->getAppliedPatches();
+        $this->showChangedPatches($patches);
+
+        $limit = $this->getLimit();
         $this->getWriter()->line()->line("applied patches (" . $limit . " latest)")->separate();
 
         if (count($patches) == 0) {
             $this->getWriter()->warning("no patches found")->line();
         } else {
-            foreach ($patches as $patch) {
+            // only show latest x patches
+            if (count($patches) < $limit) {
+                $limit = count($patches);
+            }
+            for ($i = 0; $i < $limit; $i++) {
+                
                 $this->writer->line(sprintf("%04d | %s | %s | %s",
-                                            $patch['patch_number'],
-                                            $patch['completed'],
-                                            $patch['filename'],
-                                            $patch['description']));
+                                            $patches[$i]['patch_number'],
+                                            $patches[$i]['completed'],
+                                            $patches[$i]['filename'],
+                                            $patches[$i]['description']));
             }
         }
+    }
+
+    /**
+     * Show patches that have been changed since they are applied
+     * @param array $patches
+     * @return void
+     */
+    protected function showChangedPatches($patches)
+    {
+        if (count($patches) == 0) return;
+        
+        foreach($patches as $patch) {
+            $patchDirectory = $this->getPatchDirectory();
+            $file = $patchDirectory . '/' . $patch['filename'];
+
+            $hash = hash_file('crc32', $file);
+            if($hash != $patch['hash']) {
+                $this->getWriter()->warning(
+                    $patch['filename'] .
+                    ' has been changed since it\'s applied on ' .
+                    $patch['completed']
+                );
+            }
+        }
+        return;
     }
 
     /**
@@ -155,7 +187,6 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
         if ($branch != '') {
             $where = 'WHERE branch =\'' . $db->escapeSQL($branch) . '\'';
         }
-        $limit = $this->getLimit();
 
         $sql = sprintf("
             SELECT
@@ -163,15 +194,15 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
                 `completed`,
                 `filename`,
                 `description`,
+                `hash`,
                 IF(`branch`='%s',0,1) as `branch_order`
             FROM `%s`
             %s
             ORDER BY `completed` DESC, `branch_order` ASC, `patch_number` DESC
-            LIMIT %d",
+            ",
                        self::DEFAULT_BRANCH,
                        self::TABLE,
-                       $where,
-                       (int)$limit
+                       $where
         );
 
         return $db->fetchAll($sql);

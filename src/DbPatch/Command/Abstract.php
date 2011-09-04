@@ -280,8 +280,6 @@ abstract class DbPatch_Command_Abstract
      * Check if the passed patch number can be found in the changelog table
      * for the specified branch
      *
-     * @todo Also check if the patch has been modified and return status
-     *       (no, yes, yes but changed)
      * @param int $patchNumber
      * @param string $branch
      * @return boolean $result true if patch already applied; false if not
