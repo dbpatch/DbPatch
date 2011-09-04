@@ -75,9 +75,40 @@ class DbPatch_Command_Runner
     {
         return array(
             'help', 'create', 'remove', 'show',
-            'status', 'sync', 'update', 'dump'
+            'status', 'sync', 'update', 'dump',
         );
 
+    }
+
+    /**
+     * Convert short commands to long names
+     * @static
+     * @param string $command
+     * @return string
+     */
+    protected function convertShortCommand($command)
+    {
+        $cmd = '';
+        switch ($command) {
+            case 'he' : $cmd = 'help';
+                        break;
+            case 'cr' : $cmd = 'create';
+                        break;
+            case 're' : $cmd = 'remove';
+                        break;
+            case 'sh' : $cmd = 'show';
+                        break;
+            case 'st' : $cmd = 'status';
+                        break;
+            case 'sy' : $cmd = 'sync';
+                        break;
+            case 'up' : $cmd = 'update';
+                        break;
+            case 'du' : $cmd = 'dump';
+                        break;
+        }
+
+        return $cmd;
     }
 
     /**
@@ -104,8 +135,12 @@ class DbPatch_Command_Runner
      */
     public function getCommand($command, $console)
     {
+        if(strlen($command) == 2) {
+            $command = self::convertShortCommand($command);
+        }
+
         if (empty($command) || !in_array($command, self::getValidCommands())) {
-            throw new Exception('Please provide a valid command');
+            throw new DbPatch_Command_ConfigurationException('Please provide a valid command');
         }
 
         $class = 'DbPatch_Command_' . ucfirst(strtolower($command));
@@ -116,7 +151,7 @@ class DbPatch_Command_Runner
                     ->setConsole($console);
 
         } catch (Exception $e) {
-            throw new Exception('Unknown command: ' . $command);
+            throw new DbPatch_Command_ConfigurationException('Unknown command: ' . $command);
         }
         return $command;
     }
