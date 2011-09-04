@@ -168,6 +168,7 @@ class DbPatch_Core_Color
     }
 
     /**
+     * @param boolean $autoErase
      * @return string ANSI color reset code
      */
     public function reset($autoErase = true)

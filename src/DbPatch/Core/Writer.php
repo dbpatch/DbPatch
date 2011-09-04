@@ -102,7 +102,6 @@ class DbPatch_Core_Writer
     /**
      * Outputs a message with a new line
      * @param string $message
-     * @param resource $stream
      * @return DbPatch_Core_Writer
      */
     public function line($message = '')

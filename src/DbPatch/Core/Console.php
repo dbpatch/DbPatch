@@ -77,7 +77,7 @@ class DbPatch_Core_Console
      * @param array $argv
      * @return void
      */
-    public function __construct($argv)
+    public function __construct(array $argv)
     {
         if (count($argv) > 0) {
             $this->arguments = array_slice($argv, 1);

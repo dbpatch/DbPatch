@@ -125,7 +125,7 @@ class DbPatch_Core_Application
 
     /**
      * @param string $filename
-     * @return DbPatch_Core_Config
+     * @return null|\Zend_Config|\Zend_Config_Ini|\Zend_Config_Xml
      */
     protected function getConfig($filename = null)
     {
@@ -134,8 +134,8 @@ class DbPatch_Core_Application
     }
 
     /**
-     * @param DbPatch_Core_Config $config
-     * @return DbPatch_Core_Db
+     * @param \Zend_Config|\Zend_Config_Ini|\Zend_Config_Xml $config
+     * @return null|Zend_Db_Adapter_Abstract
      */
     protected function getDb($config)
     {
@@ -153,7 +153,7 @@ class DbPatch_Core_Application
 
     /**
      * @param array $argv
-     * @return DbPatch_Core_Writer
+     * @return DbPatch_Core_Console
      */
     protected function getConsole($argv)
     {
