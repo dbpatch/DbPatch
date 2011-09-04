@@ -76,13 +76,19 @@ class DbPatch_Core_Application
         $configFile = $console->getOptionValue('config', null);
         $useColor = $console->getOptionValue('color', false);
 
-        if ($useColor) {
-            $writer->setColor($this->getWriterColor());
+        // Show dbpatch version
+        if ($console->issetOption('version')) {
+            $writer->version();
+            return;
         }
 
         // Load the right config file
         try {
             $config = $this->getConfig($configFile);
+            if ($useColor || $config->color) {
+                $writer->setColor($this->getWriterColor());
+            }
+
         } catch (Exception $e) {
             $writer->error($e->getMessage())->line();
             $runner->showHelp();
@@ -90,11 +96,6 @@ class DbPatch_Core_Application
         }
 
         $db = $this->getDb($config);
-
-        if ($console->issetOption('version')) {
-            $writer->version();
-            return;
-        }
 
         // Finally execute the right command
         try {
