@@ -1,3 +1,5 @@
 <?php
-$dbPatchConfig = array();
- 
+
+$dbPatchConfig = array(
+
+);

@@ -89,29 +89,43 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
             return false;
         }
 
-        $config = $this->config->db->params;
-        $database = $config->dbname;
-        $user = $config->username;
-        $password = $config->password;
-        $host = $config->host;
-        $port = isset($config->port) ? $config->port : '';
+        $config     = $this->config->db->params;
 
-        if ($password != '') {
-            $password = '-p' . $password;
+        $database   = '';
+        if (isset($config->dbname) && $config->dbname) {
+            $database = escapeshellarg($config->dbname);
         }
 
-        if ($port != '') {
-            $port = '-P' . $port;
-
+        $user = '';
+        if (isset($config->username) && $config->username) {
+            $user = escapeshellarg($config->username);
         }
 
-        $command = sprintf("mysql -h %s -u %s %s %s %s < '%s' 2>&1",
-                           $host,
-                           $user,
-                           $password,
-                           $port,
-                           $database,
-                           $this->data['filename']
+        $password = '';
+        if (isset($config->password) && $config->password) {
+            $password = '-p' . escapeshellarg($config->password);
+        }
+
+        $host = '';
+        if (isset($config->host) && $config->host) {
+            $host = escapeshellarg($config->host);
+        }
+
+        $port = '';
+        if (isset($config->port) && $config->port) {
+            $port = '-P' . (int)$port;
+        }
+
+        $filename = escapeshellarg($this->data['filename']);
+
+        $command = sprintf(
+            "mysql -h %s -u %s %s %s %s < '%s' 2>&1",
+            $host,
+            $user,
+            $password,
+            $port,
+            $database,
+            $filename
         );
 
         exec($command, $result, $return);

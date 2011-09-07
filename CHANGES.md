@@ -7,4 +7,4 @@ Latest changes go on top, different types of changes may be mixed.
 
 Changes in DbPatch 1.0
 ----------------------
-+ Initial version
++  Initial version
