@@ -264,7 +264,7 @@ abstract class DbPatch_Command_Abstract
     }
 
     /**
-     * @return string
+     * @return string|bool
      */
     public function getPatchDirectory()
     {
@@ -273,6 +273,7 @@ abstract class DbPatch_Command_Abstract
         } else {
             $dir = self::PATCH_DIRECTORY;
         }
+
         return $dir;
     }
 
@@ -313,7 +314,7 @@ abstract class DbPatch_Command_Abstract
     {
         $patchDirectory = $this->getPatchDirectory();
 
-        if (!file_exists($patchDirectory)) {
+        if (!is_dir($patchDirectory)) {
             $this->writer->error('path ' . $patchDirectory . ' doesn\'t exists');
             return array();
         }
@@ -380,6 +381,12 @@ abstract class DbPatch_Command_Abstract
         $branches = array(self::DEFAULT_BRANCH);
 
         $patchDirectory = $this->getPatchDirectory();
+
+        if (!is_dir($patchDirectory)) {
+            $this->writer->error('path ' . $patchDirectory . ' doesn\'t exists');
+            return array();
+        }
+
         try {
             $iterator = new DirectoryIterator($patchDirectory);
         } catch (Exception $e) {

@@ -113,17 +113,19 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
     {
         if (count($patches) == 0) return;
         
-        foreach($patches as $patch) {
-            $patchDirectory = $this->getPatchDirectory();
-            $file = $patchDirectory . '/' . $patch['filename'];
+        $patchDirectory = $this->getPatchDirectory();
+        if (is_dir($patchDirectory)) {
+            foreach($patches as $patch) {
+                $file = $patchDirectory . '/' . $patch['filename'];
 
-            $hash = hash_file('crc32', $file);
-            if($hash != $patch['hash']) {
-                $this->getWriter()->warning(
-                    $patch['filename'] .
-                    ' has been changed since it\'s applied on ' .
-                    $patch['completed']
-                );
+                $hash = hash_file('crc32', $file);
+                if($hash != $patch['hash']) {
+                    $this->getWriter()->warning(
+                        $patch['filename'] .
+                        ' has been changed since it\'s applied on ' .
+                        $patch['completed']
+                    );
+                }
             }
         }
         return;
