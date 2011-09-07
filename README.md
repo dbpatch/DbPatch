@@ -1,37 +1,28 @@
-README
+DbPatch
 ======
 
-What is DbPatch?
-----------------
-DbPatch is a commandline utility to manage/track sql/php patch files.
-
-
-TODO
-----
-see docs/TODO
+DbPatch is a commandline utility to manage/track (my)sql/php patch files.
 
 Requirements
 ------------
 DbPatch requires the following:
-- PHP 5.1.x or higher
-- MySQL (client)
-
+*  PHP 5.1.x or higher
+*  MySQL (client)
 
 Documentation
 -------------
-For more detaild information you can check our online documentation at
-https://github.com/sndpl/DbPatch/wiki
+For more detailed information you can check our online documentation at:
+[https://github.com/sndpl/DbPatch/wiki]
 
-
-Licence
+License
 -------
-see docs/LICENCE
+DbPatch is BSD licensed, see LICENSE.
 
-Contact
+Support
 -------
-To come in contact can be done in various ways:
+If you're looking for help, you can reach me by:
 
-# Twitter: sndpl
-# Github: https://github.com/sndpl/DbPatch
+*  Twitter: @sndpl ([http://twitter.com/sndpl])
+*  Github: [https://github.com/sndpl/DbPatch]
 
 
