@@ -67,38 +67,14 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
      */
     public function execute()
     {
-        $filename = null;
+        $filename = $this->getDumpFilename();
         $database = $this->config->db->params->dbname;
-        if ($this->console->issetOption('file')) {
-            $filename = $this->console->getOptionValue('file', null);
-        }
-
-        if (is_null($filename)) {
-            $filename = $database . '_' . date('Ymd_Hi') . '.sql';
-        }
-
+ 
         $this->writer->line('Dumping database ' . $database . ' to file ' . $filename);
         $this->dumpDatabase($filename);
         return;
     }
 
-    /**
-     * Dump database
-     *
-     * @param string $filename
-     * @return bool
-     */
-    protected function dumpDatabase($filename)
-    {
-        try {
-            $db = $this->getDb();
-            $db->dump($filename);
-        } catch (Exception $e) {
-            $this->writer->error($e->getMessage());
-            return false;
-        }
-        return true;
-    }
 
     /**
      * @return void

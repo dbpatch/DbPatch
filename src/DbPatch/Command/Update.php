@@ -69,6 +69,7 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
     {
         $branch = $this->getBranch();
         $force = ($this->console->issetOption('force')) ? true : false;
+        $createDump = isset($this->config->dump_before_update) ? $this->config->dump_before_update : false;
 
         $latestPatchNumber = $this->getLastPatchNumber($branch);
 
@@ -84,6 +85,13 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
                                     count($patchFiles),
                                     (count($patchFiles) == 1) ? 'file' : 'files'
                             ));
+
+        if ($createDump) {
+            $database = $this->config->db->params->dbname;
+            $filename = $this->getDumpFilename();
+            $this->writer->line('Dumping database ' . $database . ' to file ' . $filename);
+            $this->dumpDatabase($filename);
+        }
 
         $patchNumbersToSkip = $this->getPatchNumbersToSkip($this->console->getOptions(), $patchFiles);
 

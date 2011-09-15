@@ -515,6 +515,43 @@ abstract class DbPatch_Command_Abstract
     }
 
     /**
+     * Dump database
+     *
+     * @param string $filename
+     * @return bool
+     */
+    protected function dumpDatabase($filename)
+    {
+        try {
+            $db = $this->getDb();
+            $db->dump($filename);
+        } catch (Exception $e) {
+            $this->writer->error($e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Create dump filename
+     * @return string
+     */
+    protected function getDumpFilename()
+    {
+        $filename = null;
+        $database = $this->config->db->params->dbname;
+        if ($this->console->issetOption('file')) {
+            $filename = $this->console->getOptionValue('file', null);
+        }
+
+        if (is_null($filename)) {
+            $filename = $database . '_' . date('Ymd_Hi') . '.sql';
+        }
+
+        return $filename;
+    }
+
+    /**
      * Show help options for a given command
      * 
      * @param string $command

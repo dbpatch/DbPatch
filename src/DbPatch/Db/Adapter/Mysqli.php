@@ -98,8 +98,14 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         );
 
         exec($command, $result, $return);
+        var_dump($result);
         if ($return <> 0) {
-            throw new exception('Error importing file ' . $filename);
+            throw new exception(
+                'Error importing file ' .
+                $filename .
+                "\n" .
+                implode(PHP_EOL, $result)
+            );
         }
         return true;
 
@@ -113,7 +119,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
     public function dump($filename)
     {
         $commandArgs = $this->getShellCommandArgs();
-        $filename = escapeshellarg($filename);
+        $filename = escapeshellarg('./' . $filename);
 
         $command = sprintf(
             "mysqldump %s > %s 2>&1",
@@ -123,7 +129,12 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
 
         exec($command, $result, $return);
         if ($return <> 0) {
-            throw new exception('Error dumping file ' . $filename);
+            throw new exception(
+                'Error dumping file ' .
+                $filename .
+                "\n" .
+                implode(PHP_EOL, $result)
+            );
         }
         return true;
     }
