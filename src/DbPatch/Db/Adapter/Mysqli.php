@@ -91,18 +91,27 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         $commandArgs = $this->getShellCommandArgs();
         $filename = escapeshellarg($filename);
 
-        $command = sprintf(
-            "mysql %s < %s 2>&1",
+        $command = "mysql";
+
+        if (isset($this->_config['bin_dir']) && $this->_config['bin_dir']) {
+            $command = $this->_config['bin_dir'] . '/' . $command;
+        }
+
+        $commandLine = sprintf(
+            "%s %s < %s 2>&1",
+            $command,
             $commandArgs,
             $filename
         );
 
-        exec($command, $result, $return);
+        exec($commandLine, $result, $return);
         var_dump($result);
         if ($return <> 0) {
             throw new exception(
                 'Error importing file ' .
                 $filename .
+                "\n" .
+                $commandLine .
                 "\n" .
                 implode(PHP_EOL, $result)
             );
@@ -121,17 +130,25 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         $commandArgs = $this->getShellCommandArgs();
         $filename = escapeshellarg('./' . $filename);
 
-        $command = sprintf(
-            "mysqldump %s > %s 2>&1",
+        $command = 'mysqldump';
+        
+        if (isset($this->_config['bin_dir']) && $this->_config['bin_dir']) {
+            $command = $this->_config['bin_dir'] . '/' . $command;
+        }
+        $commandLine = sprintf(
+            "%s %s > %s 2>&1",
+            $command,
             $commandArgs,
             $filename
         );
 
-        exec($command, $result, $return);
+        exec($commandLine, $result, $return);
         if ($return <> 0) {
             throw new exception(
                 'Error dumping file ' .
                 $filename .
+                "\n" .
+                $commandLine .
                 "\n" .
                 implode(PHP_EOL, $result)
             );
