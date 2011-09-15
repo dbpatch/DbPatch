@@ -85,47 +85,18 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
     /**
      * Dump database
      *
-     * @todo Add Character set to mysqldump command
      * @param string $filename
      * @return bool
      */
     protected function dumpDatabase($filename)
     {
-        $config = $this->config->db->params;
-        $database = $config->dbname;
-        $user = $config->username;
-        $password = $config->password;
-        $host = $config->host;
-        $port = isset($config->port) ? $config->port : '';
-
-        if ($password != '') {
-            $password = '-p' . $password;
-        }
-
-        if ($port != '') {
-            $port = '-P' . $port;
-
-        }
-        $command = sprintf("mysqldump -h %s -u %s %s %s %s > '%s' 2>&1",
-                           $host,
-                           $user,
-                           $password,
-                           $port,
-                           $database,
-                           $filename
-        );
-
-        exec($command, $result, $return);
-
-        if ($return <> 0) {
-
-            $this->writer->error(sprintf("invalid SQL in patch file %s:\n\n%s\n",
-                                         $this->data['basename'],
-                                         implode(PHP_EOL, $result)
-                                 ));
+        try {
+            $db = $this->getDb();
+            $db->dump($filename);
+        } catch (Exception $e) {
+            $this->writer->error($e->getMessage());
             return false;
         }
-
         return true;
     }
 

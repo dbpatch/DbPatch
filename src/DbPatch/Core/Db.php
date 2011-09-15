@@ -73,7 +73,9 @@ class DbPatch_Core_Db
      */
     public function __construct($config)
     {
-        $this->db = Zend_Db::factory($config->db);
+        $dbConfig = $config->db->params->toArray();
+        $dbConfig['adapterNamespace'] = 'DbPatch_Db_Adapter';
+        $this->db = Zend_Db::factory($config->db->adapter, $dbConfig);
     }
 
     /**

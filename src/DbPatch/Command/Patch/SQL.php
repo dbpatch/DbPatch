@@ -89,56 +89,13 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
             return false;
         }
 
-        $config     = $this->config->db->params;
-
-        $database   = '';
-        if (isset($config->dbname) && $config->dbname) {
-            $database = escapeshellarg($config->dbname);
-        }
-
-        $user = '';
-        if (isset($config->username) && $config->username) {
-            $user = escapeshellarg($config->username);
-        }
-
-        $password = '';
-        if (isset($config->password) && $config->password) {
-            $password = '-p' . escapeshellarg($config->password);
-        }
-
-        $host = '';
-        if (isset($config->host) && $config->host) {
-            $host = escapeshellarg($config->host);
-        }
-
-        $port = '';
-        if (isset($config->port) && $config->port) {
-            $port = '-P' . (int)$port;
-        }
-
-        $filename = escapeshellarg($this->data['filename']);
-
-        $command = sprintf(
-            "mysql -h %s -u %s %s %s %s < '%s' 2>&1",
-            $host,
-            $user,
-            $password,
-            $port,
-            $database,
-            $filename
-        );
-
-        exec($command, $result, $return);
-
-        if ($return <> 0) {
-
-            $this->writer->error(sprintf("invalid SQL in patch file %s:\n\n%s\n",
-                                         $this->data['basename'],
-                                         implode(PHP_EOL, $result)
-                                 ));
+        try {
+            $db = $this->getDb();
+            $db->import($this->data['filename']);
+        } catch (Exception $e) {
+            $this->writer->error($e->getMessage());
             return false;
         }
-
         return true;
     }
 
