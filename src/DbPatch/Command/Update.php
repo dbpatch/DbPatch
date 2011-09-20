@@ -222,7 +222,7 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function showHelp($command = '')
     {
         parent::showHelp('update');
         $writer = $this->getWriter();
