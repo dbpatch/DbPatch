@@ -366,6 +366,7 @@ abstract class DbPatch_Command_Abstract
                 $patches[$patchNumber] = $patch;
             }
         }
+        ksort($patches);
         return $patches;
     }
 
