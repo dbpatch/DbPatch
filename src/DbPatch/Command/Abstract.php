@@ -289,12 +289,12 @@ abstract class DbPatch_Command_Abstract
     {
         $db = $this->getDb();
         $query = sprintf("SELECT COUNT(patch_number) as applied
-                          FROM `%s`
+                          FROM %s
                           WHERE `patch_number` = %d
-                          AND `branch` = '%s'",
-                         self::TABLE,
+                          AND `branch` = %s",
+                         $db->quoteIdentifier(self::TABLE),
                          $patchNumber,
-                         $branch);
+                         $db->quote($branch));
 
         $patchRecords = $db->fetchAll($query);
 
@@ -492,27 +492,41 @@ abstract class DbPatch_Command_Abstract
      */
     protected function addToChangelog($patchFile, $description = null)
     {
-        $this->writer->line(sprintf(
-                                'added %s to the changelog ', $patchFile->basename));
 
         if ($description == null) {
             $description = $patchFile->description;
         }
-        $db = $this->getDb();
 
-        $sql = sprintf("
-            INSERT INTO %s (patch_number, branch, completed, filename, description, hash)
-            VALUES(%d, %s, NOW(), %s, %s, %s)",
-                       $db->quoteIdentifier(self::TABLE),
-                       $patchFile->patch_number,
-                       $db->quote($patchFile->branch),
-                       $db->quote($patchFile->basename),
-                       $db->quote($description),
-                       $db->quote($patchFile->hash)
-        );
+        if($this->isPatchApplied($patchFile->patch_number, $patchFile->branch)) {
+             $this->writer->warning(
+                 sprintf(
+                     'Skip %s, already exists in the changelog',
+                     $patchFile->basename
+                 )
+             );
+         } else {
+            $db = $this->getDb();
 
-        $db->query($sql);
-        $db->commit();
+            $sql = sprintf("
+                INSERT INTO %s (patch_number, branch, completed, filename, description, hash)
+                VALUES(%d, %s, NOW(), %s, %s, %s)",
+                           $db->quoteIdentifier(self::TABLE),
+                           $patchFile->patch_number,
+                           $db->quote($patchFile->branch),
+                           $db->quote($patchFile->basename),
+                           $db->quote($description),
+                           $db->quote($patchFile->hash)
+            );
+
+            $db->query($sql);
+            $db->commit();
+            $this->writer->line(
+                sprintf(
+                    'added %s to the changelog ',
+                    $patchFile->basename
+                )
+            );
+        }
     }
 
     /**
