@@ -105,8 +105,8 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         );
 
         exec($commandLine, $result, $return);
-        var_dump($result);
-        if ($return <> 0) {
+        
+		if ($return <> 0) {
             throw new exception(
                 'Error importing file ' .
                 $filename .
