@@ -33,7 +33,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException DbPatch_Exception
      */
     public function testInvalidConfigFile()
     {
@@ -42,7 +42,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException DbPatch_Exception
      */
     public function testSearchConfig()
     {

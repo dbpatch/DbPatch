@@ -114,19 +114,19 @@ abstract class DbPatch_Command_Abstract
     abstract public function execute();
 
     /**
-     * @throws Exception
+     * @throws DbPatch_Exception
      * @return DbPatch_Command_Abstract
      */
     public function init()
     {
         if (!$this->validateChangelog()) {
-            throw new Exception('Can\'t create changelog table');
+            throw new DbPatch_Exception('Can\'t create changelog table');
         }
         return $this;
     }
 
     /**
-     * @param \Zend_Db_Adapter_Abstract $db
+     * @param Zend_Db_Adapter_Abstract $db
      * @return DbPatch_Command_Abstract
      */
     public function setDb(Zend_Db_Adapter_Abstract $db)

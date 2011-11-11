@@ -63,7 +63,7 @@
 class DbPatch_Command_Help extends DbPatch_Command_Abstract
 {
     /**
-     * @throws Exception
+     * @throws DbPatch_Exception
      * @return void
      */
     public function execute()
@@ -80,7 +80,7 @@ class DbPatch_Command_Help extends DbPatch_Command_Abstract
                 return;
             }
         }
-        throw new Exception('Please provide a valid command');
+        throw new DbPatch_Exception('Please provide a valid command');
     }
 
     /**
