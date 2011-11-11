@@ -82,7 +82,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
 
     /**
      * Import SQL files with Mysql Binary
-     * @throws exception
+     * @throws DbPatch_Exception
      * @param string $filename
      * @return bool
      */
@@ -107,7 +107,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         exec($commandLine, $result, $return);
         
 		if ($return <> 0) {
-            throw new exception(
+            throw new DbPatch_Exception(
                 'Error importing file ' .
                 $filename .
                 "\n" .
@@ -122,6 +122,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
 
     /**
      * Dump database with MysqlDump binary
+     * @throws DbPatch_Exception
      * @param string $filename
      * @return bool
      */
@@ -144,7 +145,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
 
         exec($commandLine, $result, $return);
         if ($return <> 0) {
-            throw new exception(
+            throw new DbPatch_Exception(
                 'Error dumping file ' .
                 $filename .
                 "\n" .

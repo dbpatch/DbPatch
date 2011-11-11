@@ -112,7 +112,7 @@ abstract class DbPatch_Command_Patch_Abstract
     /**
      * Load the values from an array provided.
      *
-     * @throws Exception
+     * @throws DbPatch_Exception
      * @param array $values the values we're using to set the values in the
      * value object
      * @return void
@@ -126,7 +126,7 @@ abstract class DbPatch_Command_Patch_Abstract
         }
 
         if (!is_array($values)) {
-            throw new Exception('Initial data must be an array or object');
+            throw new DbPatch_Exception('Initial data must be an array or object');
         }
 
         foreach ($values as $key => $value) {
@@ -139,7 +139,7 @@ abstract class DbPatch_Command_Patch_Abstract
      *
      * @param string $name name of the property
      * @param mixed $value the value
-     * @throws Exception
+     * @throws DbPatch_Exception
      */
     public function __set($name, $value)
     {
@@ -158,7 +158,7 @@ abstract class DbPatch_Command_Patch_Abstract
             return;
         }
 
-        throw new Exception('[SET] Property ' . $name . ' is not implemented for class ' . get_class($this));
+        throw new DbPatch_Exception('[SET] Property ' . $name . ' is not implemented for class ' . get_class($this));
     }
 
     /**
@@ -195,7 +195,7 @@ abstract class DbPatch_Command_Patch_Abstract
     /**
      * Returns the value requested.
      *
-     * @throws Exception
+     * @throws DbPatch_Exception
      * @param string $name the name of the property
      * @return mixed the value
      */
@@ -214,13 +214,13 @@ abstract class DbPatch_Command_Patch_Abstract
             return $this->data[$key];
         }
 
-        throw new Exception('[GET] Property ' . $name . '/' . $key . ' is not implemented for class ' . get_class($this));
+        throw new DbPatch_Exception('[GET] Property ' . $name . '/' . $key . ' is not implemented for class ' . get_class($this));
     }
 
     /**
      * Check if a value isset
      * 
-     * @throws Exception
+     * @throws DbPatch_Exception
      * @param string $name Name of the property
      * @return bool
      */
@@ -241,7 +241,7 @@ abstract class DbPatch_Command_Patch_Abstract
             return isset($this->data[$key]);
         }
 
-        throw new Exception('[ISSET] Property ' . $name . ' is not implemented for class ' . get_class($this));
+        throw new DbPatch_Exception('[ISSET] Property ' . $name . ' is not implemented for class ' . get_class($this));
     }
 
     /**

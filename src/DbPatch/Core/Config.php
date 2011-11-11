@@ -77,7 +77,7 @@ class DbPatch_Core_Config
         }
 
         if (is_null($filename)) {
-            throw new Exception('No config file found');
+            throw new DbPatch_Exception('No config file found');
         }
 
         $type = $this->detectConfigType($filename);
@@ -95,7 +95,7 @@ class DbPatch_Core_Config
                 $this->config = new Zend_Config_Xml($filename, 'dbpatch');
                 break;
             default:
-                throw new Exception('Not a valid config file');
+                throw new DbPatch_Exception('Not a valid config file');
         }
     }
 

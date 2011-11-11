@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package DbPatch
- * @subpackage Command
+ * @subpackage Core
  * @author Sandy Pleyte
  * @author Martijn de Letter
  * @copyright 2011 Sandy Pleyte
@@ -48,10 +48,10 @@
  */
 
 /**
- * Create patch command
- * 
+ * Dbpatch Exception
+ *
  * @package DbPatch
- * @subpackage Command
+ * @subpackage Core
  * @author Sandy Pleyte
  * @author Martijn de Letter
  * @copyright 2011 Sandy Pleyte
@@ -60,55 +60,5 @@
  * @link http://www.github.com/sndpl/DbPatch
  * @since File available since Release 1.0.0
  */
-class DbPatch_Command_Create extends DbPatch_Command_Abstract
-{
-    /**
-     * Create empty patch file
-     *
-     * @throws DbPatch_Exception
-     * @return void
-     */
-    public function execute()
-    {
-        $type = $this->console->getOptionValue('type', null);
-        $patchNumber = $this->console->getOptionValue('number', null);
+class DbPatch_Exception extends Exception {}
 
-        if (is_null($type) || !in_array(strtolower($type), array('php', 'sql'))) {
-            throw new DbPatch_Exception('Invalid patch type!');
-        }
-
-        $patch = DbPatch_Command_Patch::factory($type);
-        $patch->setWriter($this->getWriter());
-
-        if (is_null($patchNumber)) {
-            $branch = $this->getBranch();
-            $patches = $this->getPatches($branch, '*');
-
-            if (count($patches)) {
-                $lastPatch = end($patches);
-                $patchNumber = $lastPatch->patchNumber + 1;
-            } else {
-                $patchNumber = 1;
-            }
-        }
-
-        $description = $this->console->getOptionValue('description', 'Empty Patch');
-
-        $patch->patchNumber = $patchNumber;
-        $patch->branch = $this->getBranch();
-
-        $patch->create($description, $this->getPatchDirectory(), $this->getPatchPrefix());
-    }
-
-    /**
-     * @return void
-     */
-    public function showHelp()
-    {
-        parent::showHelp('create');
-        $writer = $this->getWriter();
-        $writer->indent(2)->line('--type=<type>      create patch of the type `php` or `sql`')
-                ->indent(2)->line('--number=<int>     Patchnumber to create')
-                ->line();
-    }
-}
