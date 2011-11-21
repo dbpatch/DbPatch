@@ -12,7 +12,7 @@ DbPatch requires the following:
 Documentation
 -------------
 For more detailed information you can check our online documentation at:
-[https://github.com/sndpl/DbPatch/wiki]
+[https://github.com/dbpatch/DbPatch/wiki]
 
 License
 -------
@@ -22,7 +22,7 @@ Support
 -------
 If you're looking for help, you can reach me by:
 
-*  Twitter: @sndpl ([http://twitter.com/sndpl])
-*  Github: [https://github.com/sndpl/DbPatch]
+*  Twitter: @dbpatchproject ([http://twitter.com/dbpatchproject])
+*  Github: [https://github.com/dbpatch/DbPatch]
 
 

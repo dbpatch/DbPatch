@@ -43,7 +43,7 @@
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn de Letter
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
- * @link http://www.github.com/sndpl/DbPatch
+ * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
  */
 
@@ -58,7 +58,7 @@
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn de Letter
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
- * @link http://www.github.com/sndpl/DbPatch
+ * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
  */
 class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
