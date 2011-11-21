@@ -4,7 +4,7 @@
  * DbPatch
  *
  * Copyright (c) 2011, Sandy Pleyte.
- * Copyright (c) 2010-2011, Martijn de Letter.
+ * Copyright (c) 2010-2011, Martijn De Letter.
  *
  * All rights reserved.
  *
