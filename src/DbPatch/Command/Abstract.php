@@ -560,7 +560,7 @@ abstract class DbPatch_Command_Abstract
         }
 
         if (is_null($filename)) {
-            $filename = $database . '_' . date('Ymd_Hi') . '.sql';
+            $filename = $database . '_' . date('Ymd_His') . '.sql';
         }
 
         return $filename;

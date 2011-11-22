@@ -82,6 +82,11 @@ class DbPatch_Command_Help extends DbPatch_Command_Abstract
         }
         throw new DbPatch_Exception('Please provide a valid command');
     }
+    
+    public function init()
+    {
+        return $this;
+    }
 
     /**
      * @return void

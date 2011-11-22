@@ -69,12 +69,69 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
     {
         $filename = $this->getDumpFilename();
         $database = $this->config->db->params->dbname;
+        $moveToS3 = ($this->console->issetOption('s3')) ? true : false;
  
         $this->writer->line('Dumping database ' . $database . ' to file ' . $filename);
         $this->dumpDatabase($filename);
+        
+        if ($moveToS3) {
+            $this->moveDumpToS3($filename);
+        }
         return;
     }
-
+    
+    /**
+     * Validates the S3 settings
+     *
+     * @param array $config 
+     * @return void
+     */
+    protected function validateS3Settings($config)
+    {
+        if (!$config->aws_key) {
+            throw new DbPatch_Command_ConfigurationException('AWS s3 key config setting isn\'t available');
+        }
+        
+        if (!$config->aws_secret_key) {
+            throw new DbPatch_Command_ConfigurationException('AWS s3 secret key config setting isn\'t available');
+        }
+        
+        if (!$config->aws_bucket) {
+            throw new DbPatch_Command_ConfigurationException('AWS s3 secret key config setting isn\'t available');
+        }
+    }
+    
+    /**
+     * Move the dump file to a Amazon S3 bucket
+     *
+     * @param string $filename 
+     * @return void
+     */
+    protected function moveDumpToS3($filename)
+    {
+        $s3Config = $this->config->s3;
+        
+        $this->validateS3Settings($s3Config);
+        
+        $s3File = $s3Config->aws_bucket.'/'.$filename;
+        
+        
+        $this->writer->line('Copy '.$filename.' -> Amazon S3: '.$s3File);
+        
+        $s3 = new Zend_Service_Amazon_S3($s3Config->aws_key, $s3Config->aws_secret_key);
+        // use https for uploading
+        $s3->setEndpoint('https://'.Zend_Service_Amazon_S3::S3_ENDPOINT);
+        $s3->putObject($s3Config->aws_bucket.'/'.$filename, file_get_contents($filename));
+        $s3->getObject($s3Config->aws_bucket.'/'.$filename);
+    }
+    
+    /**
+     * Prevent db_changelog creation
+     */
+    public function init()
+    {
+        return $this;
+    }
 
     /**
      * @return void
@@ -85,6 +142,7 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
 
         $writer = $this->getWriter();
         $writer->indent(2)->line('--file=<string>    Filename')
-                ->line();
+               ->indent(2)->line('--s3               Copy the file to S3 (add S3 credentials to the config)')
+               ->line();
     }
 }
