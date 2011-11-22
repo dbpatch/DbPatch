@@ -2,7 +2,7 @@
 REM DbPatch
 REM
 REM Copyright (c) 2011, Sandy Pleyte.
-REM Copyright (c) 2010-2011, Martijn de Letter
+REM Copyright (c) 2010-2011, Martijn De Letter
 REM
 REM All rights reserved.
 REM
