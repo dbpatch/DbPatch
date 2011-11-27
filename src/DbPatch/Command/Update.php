@@ -89,6 +89,7 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
         if ($createDump) {
             $database = $this->config->db->params->dbname;
             $filename = $this->getDumpFilename();
+
             $this->writer->line('Dumping database ' . $database . ' to file ' . $filename);
             $this->dumpDatabase($filename);
         }

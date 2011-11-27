@@ -87,6 +87,7 @@ class DbPatch_Command_Info extends DbPatch_Command_Abstract
         $this->writer->line('Patchfile prefix: ' . $this->config->patch_prefix);
         $this->writer->line('Use color: ' . ($this->config->color?'yes':'no'));
         $this->writer->line('Dump database before update: ' . ($this->config->dump_before_update?'yes':'no'));
+        $this->writer->line('Dump directory: ' . $this->config->dump_directory);
 
         $this->writer->line();
         $this->writer->line('Database settings');

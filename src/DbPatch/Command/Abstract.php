@@ -563,6 +563,12 @@ abstract class DbPatch_Command_Abstract
             $filename = $database . '_' . date('Ymd_His') . '.sql';
         }
 
+        if (isset($this->config->dump_directory)) {
+            $filename = $this->config->dump_directory . '/' . $filename;
+        } else {
+            $filename = './' . $filename;
+        }
+
         return $filename;
     }
 

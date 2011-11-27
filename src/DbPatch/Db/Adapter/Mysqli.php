@@ -129,7 +129,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
     public function dump($filename)
     {
         $commandArgs = $this->getShellCommandArgs();
-        $filename = escapeshellarg('./' . $filename);
+        $filename = escapeshellarg($filename);
 
         $command = 'mysqldump';
         
