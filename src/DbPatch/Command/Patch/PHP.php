@@ -93,8 +93,24 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
 
         try {
             // retrieve db object for use in php patch file
+            $patchNumberSize = $this->getPatchNumberSize($this->getConfig()->patch_directory);
+            $patchClassName = 'DbPatchPHPPatch' . str_pad($this->patchNumber, $patchNumberSize, '0', STR_PAD_LEFT);
+
             $db = $this->getDb();
+            $config = $this->getConfig();
+            $writer = $this->getWriter();
+
             include($phpFile);
+
+            // Did we include an PHP Patch object?
+            if (class_exists($patchClassName)) {
+                $patch = new $patchClassName();
+                $patch->setDb($db)
+                    ->setWriter($writer)
+                    ->setConfig($config)
+                    ->install();
+
+            }
         } catch (Exception $e) {
             $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
             return false;
