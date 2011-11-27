@@ -437,12 +437,18 @@ abstract class DbPatch_Command_Abstract
      */
     protected function changelogExists()
     {
-        $db = $this->getDb();
-        $result = $db->fetchOne(
-            $db->quoteInto('SHOW TABLES LIKE ?', self::TABLE)
-        );
+        try {
+            $db = $this->getDb();
+            $result = $db->fetchOne(
+                $db->quoteInto('SHOW TABLES LIKE ?', self::TABLE)
+            );
+            return (bool)($result == self::TABLE);
+        } catch (Zend_Db_Adapter_Exception $e) {
+            throw new DbPatch_Exception('Database error: ' . $e->getMessage());
+        } catch (Exception $e) {
+            throw new DbPatch_Exception('Can\'t check if the changelog table exists: ' . $e->getMessage());
+        }
 
-        return (bool)($result == self::TABLE);
     }
 
     /**

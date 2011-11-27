@@ -134,7 +134,7 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
         $patchNumberSize = $this->getPatchNumberSize($patchDirectory);
         $filename = $this->getPatchFilename($patchPrefix, strtolower($this->getType()), $patchNumberSize);
         $content = '<?php' . PHP_EOL . '// ' . $description . PHP_EOL;
-        $this->writeFile($patchDirectory . $filename, $content);
+        $this->writeFile($patchDirectory . '/' . $filename, $content);
     }
 
 }

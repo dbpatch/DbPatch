@@ -178,6 +178,7 @@ class DbPatch_Command_Runner
                 ->indent(2)->line('show       show the contents of a patch file')
                 ->indent(2)->line('status     show latest applied patches')
                 ->indent(2)->line('dump       dump database')
+                ->indent(2)->line('info       show configuration')
                 ->line()
                 ->line('see \'dbpatch help <command>\' for more information on a specific command');
     }
