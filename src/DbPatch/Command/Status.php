@@ -159,7 +159,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
 
             $line = "use 'dbpatch update";
             if ($branch <> self::DEFAULT_BRANCH) {
-                $line .= " branch={$branch}";
+                $line .= " --branch={$branch}";
             }
             $line .= "' to apply the patches\n";
             $this->getWriter()->line()->line($line);
