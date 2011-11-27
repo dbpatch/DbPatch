@@ -62,6 +62,16 @@
  */
 class DbPatch_Command_Show extends DbPatch_Command_Abstract
 {
+
+    /**
+     * Override init function, don't check for changelog
+     * @return DbPatch_Command_Show
+     */
+    public function init()
+    {
+        return $this;
+    }
+
     /**
      * @return void
      */

@@ -76,6 +76,7 @@ class DbPatch_Command_Runner
         return array(
             'help', 'create', 'remove', 'show',
             'status', 'sync', 'update', 'dump',
+            'info',
         );
 
     }
@@ -105,6 +106,8 @@ class DbPatch_Command_Runner
             case 'up' : $cmd = 'update';
                         break;
             case 'du' : $cmd = 'dump';
+                        break;
+            case 'in' : $cmd = 'info';
                         break;
         }
 

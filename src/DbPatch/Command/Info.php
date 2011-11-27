@@ -48,8 +48,8 @@
  */
 
 /**
- * Show help of a given command
- * 
+ * Show patch command
+ *
  * @package DbPatch
  * @subpackage Command
  * @author Sandy Pleyte
@@ -60,32 +60,12 @@
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
  */
-class DbPatch_Command_Help extends DbPatch_Command_Abstract
+class DbPatch_Command_Info extends DbPatch_Command_Abstract
 {
-    /**
-     * @throws DbPatch_Exception
-     * @return void
-     */
-    public function execute()
-    {
-        $options = $this->console->getOptions();
-        $commands = DbPatch_Command_Runner::getValidCommands();
-        foreach ($commands as $command) {
-            if ($command != 'help' && array_key_exists($command, $options)) {
-                $class = 'DbPatch_Command_' . ucfirst(strtolower($command));
-
-                $commandObj = new $class;
-                $commandObj->setWriter($this->getWriter());
-                $commandObj->showHelp();
-                return;
-            }
-        }
-        throw new DbPatch_Exception('Please provide a valid command');
-    }
 
     /**
      * Override init function, don't check for changelog
-     * @return DbPatch_Command_Help
+     * @return DbPatch_Command_Show
      */
     public function init()
     {
@@ -95,8 +75,40 @@ class DbPatch_Command_Help extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function execute()
     {
-        parent::showHelp('help');
+        $this->writer->version();
+        $this->writer->line();
+
+        $this->writer->line('Global settings');
+        $this->writer->separate();
+        $this->writer->line('Default branch: ' . $this->config->default_branch);
+        $this->writer->line('Patch directory: ' . $this->config->patch_directory);
+        $this->writer->line('Patchfile prefix: ' . $this->config->patch_prefix);
+        $this->writer->line('Use color: ' . ($this->config->color?'yes':'no'));
+        $this->writer->line('Dump database before update: ' . ($this->config->dump_before_update?'yes':'no'));
+
+        $this->writer->line();
+        $this->writer->line('Database settings');
+        $this->writer->separate();
+        $this->writer->line('Database adapter: ' . $this->config->db->adapter);
+        $this->writer->line('Host: ' . $this->config->db->params->host);
+        $this->writer->line('Username: ' . $this->config->db->params->dbname);
+        $this->writer->line('Password: ' . $this->config->db->params->username);
+        $this->writer->line('Database: ' . $this->config->db->params->password);
+        $this->writer->line('Charset: ' . $this->config->db->params->charset);
+        $this->writer->line('Bin directory: ' . $this->config->db->params->bin_dir);
+
+        if (isset($this->config->s3)) {
+            $this->writer->line();
+            $this->writer->line('S3 settings');
+            $this->writer->separate();
+            $this->writer->line('AWS key: ' . $this->config->s3->aws_key);
+            $this->writer->line('AWS secret key: ' . $this->config->s3->aws_secret_key);
+            $this->writer->line('AWS bucket: ' . $this->config->s3->aws_bucket);
+        }
+        $this->writer->line();
+        return;
     }
+
 }
