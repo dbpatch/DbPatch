@@ -95,8 +95,8 @@ class DbPatch_Command_Help extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function showHelp($command = 'help')
     {
-        parent::showHelp('help');
+        parent::showHelp($command);
     }
 }

@@ -72,8 +72,6 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
      */
     public function execute()
     {
-        $this->writer->version();
-
         $branches = $this->detectBranches();
 
         foreach ($branches as $branch) {
@@ -213,9 +211,9 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function showHelp($command = 'status')
     {
-        parent::showHelp('status');
+        parent::showHelp($command);
     }
 
 

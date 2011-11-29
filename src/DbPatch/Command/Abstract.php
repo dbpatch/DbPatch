@@ -584,11 +584,10 @@ abstract class DbPatch_Command_Abstract
      * @param string $command
      * @return void
      */
-    protected function showHelp($command)
+    protected function showHelp($command = null)
     {
         $writer = $this->getWriter();
-        $writer->version()
-                ->line('usage: dbpatch ' . $command . ' [<args>]')
+        $writer->line('usage: dbpatch ' . $command . ' [<args>]')
                 ->line()
                 ->line('The args are:')
                 ->indent(2)->line('--config=<string>  Filename of the config file')

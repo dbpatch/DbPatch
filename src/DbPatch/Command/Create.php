@@ -103,9 +103,9 @@ class DbPatch_Command_Create extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function showHelp($command = 'create')
     {
-        parent::showHelp('create');
+        parent::showHelp($command);
         $writer = $this->getWriter();
         $writer->indent(2)->line('--type=<type>      create patch of the type `php` or `sql`')
                 ->indent(2)->line('--number=<int>     Patchnumber to create')
