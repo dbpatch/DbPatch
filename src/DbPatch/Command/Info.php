@@ -77,8 +77,6 @@ class DbPatch_Command_Info extends DbPatch_Command_Abstract
      */
     public function execute()
     {
-        $this->writer->version();
-
         $this->writer->line('Global settings')
             ->separate()
             ->line('Default branch: ' . $this->config->default_branch)
@@ -110,5 +108,11 @@ class DbPatch_Command_Info extends DbPatch_Command_Abstract
         $this->writer->line();
         return;
     }
+
+    public function showHelp($command = 'info')
+    {
+        parent::showHelp($command);
+    }
+
 
 }

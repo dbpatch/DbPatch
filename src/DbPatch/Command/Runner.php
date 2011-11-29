@@ -167,7 +167,6 @@ class DbPatch_Command_Runner
     public function showHelp()
     {
         $writer = $this->getWriter();
-        $writer->line()->version();
         $writer->line('usage: dbpatch [--version] [--help] [--config=<file>] [--color] <command> [<args>]')
                 ->line()
                 ->line('The commands are:')

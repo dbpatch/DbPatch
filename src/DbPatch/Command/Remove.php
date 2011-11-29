@@ -144,9 +144,9 @@ class DbPatch_Command_Remove extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function showHelp($command = 'remove')
     {
-        parent::showHelp('remove');
+        parent::showHelp($command);
 
         $writer = $this->getWriter();
         $writer->indent(2)->line('--patch=<int>      One or more patchnumbers seperated by a comma to remove')

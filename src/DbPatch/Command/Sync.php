@@ -83,9 +83,9 @@ class DbPatch_Command_Sync extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function showHelp($command = 'sync')
     {
-        parent::showHelp('sync');
+        parent::showHelp($command);
     }
 
 

@@ -77,8 +77,8 @@ class DbPatch_Core_Application
         $useColor = $console->getOptionValue('color', false);
 
         // Show dbpatch version
+        $writer->version();
         if ($console->issetOption('version')) {
-            $writer->version();
             return;
         }
 
@@ -87,6 +87,9 @@ class DbPatch_Core_Application
             $config = $this->getConfig($configFile);
             if ($useColor || $config->color) {
                 $writer->setColor($this->getWriterColor());
+            }
+            if(isset($config->debug) && $config->debug) {
+                $writer->setDebug($config->debug);
             }
 
         } catch (Exception $e) {

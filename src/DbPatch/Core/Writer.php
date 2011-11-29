@@ -68,6 +68,11 @@ class DbPatch_Core_Writer
     protected $_color = null;
 
     /**
+     * @var bool
+     */
+    protected $_debug = false;
+
+    /**
      * Writer uses ANSI coloring when color object provided
      *
      * @param DbPatch_Core_Color $color
@@ -78,6 +83,11 @@ class DbPatch_Core_Writer
         $this->_color = $color;
 
         return $this;
+    }
+
+    public function setDebug($debug)
+    {
+        $this->_debug = $debug;
     }
 
     /**
@@ -121,7 +131,7 @@ class DbPatch_Core_Writer
     }
 
     /**
-     * Write an error messages
+     * Write a error message
      *
      * @param  string $message
      * @return DbPatch_Core_Writer
@@ -132,7 +142,7 @@ class DbPatch_Core_Writer
     }
 
     /**
-     * Write an success messages
+     * Write a success message
      *
      * @param  string $message
      * @return DbPatch_Core_Writer
@@ -140,6 +150,20 @@ class DbPatch_Core_Writer
     public function success($message)
     {
         return $this->_message('SUCCESS: ' . $message, 'success');
+    }
+
+    /**
+     * Write a debug message
+     *
+     * @param string $message
+     * @return DbPatch_Core_Writer
+     */
+    public function debug($message)
+    {
+        if ($this->_debug) {
+            return $this->_message('DEBUG: ' . $message, 'debug');
+        }
+        return $this;
     }
 
     /**

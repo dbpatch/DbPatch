@@ -224,9 +224,9 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
      * @param string $command Command name
      * @return void
      */
-    public function showHelp($command = '')
+    public function showHelp($command = 'update')
     {
-        parent::showHelp('update');
+        parent::showHelp($command);
         $writer = $this->getWriter();
         $writer
                 ->indent(2)->line('--skip=<int>       One or more patchnumbers seperated by a comma to skip')

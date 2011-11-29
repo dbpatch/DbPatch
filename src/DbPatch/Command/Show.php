@@ -113,9 +113,9 @@ class DbPatch_Command_Show extends DbPatch_Command_Abstract
     /**
      * @return void
      */
-    public function showHelp()
+    public function showHelp($command = 'show')
     {
-        parent::showHelp('show');
+        parent::showHelp($command);
 
         $writer = $this->getWriter();
         $writer->indent(2)->line('--patch=<int>      Patchnumber to show')
