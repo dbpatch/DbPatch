@@ -117,8 +117,7 @@ class DbPatch_Core_Writer
      */
     public function info($message)
     {
-        $this->_message($message, 'info');
-        return $this;
+        return $this->_message($message, 'info');
     }
 
     /**
@@ -161,8 +160,7 @@ class DbPatch_Core_Writer
      */
     public function separate()
     {
-        $this->line('----------------------------------');
-        return $this;
+        return $this->line('----------------------------------');
     }
 
     /**
@@ -172,8 +170,7 @@ class DbPatch_Core_Writer
      */
     public function version()
     {
-        $this->line('DbPatch version ' . DbPatch_Core_Version::VERSION);
-        return $this;
+        return $this->line('DbPatch version ' . DbPatch_Core_Version::VERSION)->line();
     }
 
     /**
@@ -184,8 +181,7 @@ class DbPatch_Core_Writer
      */
     public function indent($spaces = 4)
     {
-        $this->output(str_repeat(' ', $spaces));
-        return $this;
+        return $this->output(str_repeat(' ', $spaces));
     }
 
 
@@ -209,8 +205,6 @@ class DbPatch_Core_Writer
         if ($pallet != 'info') {
             $stream = STDERR;
         }
-        $this->output($message, $stream);
-
-        return $this;
+        return $this->output($message, $stream);
     }
 }
