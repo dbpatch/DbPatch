@@ -78,35 +78,34 @@ class DbPatch_Command_Info extends DbPatch_Command_Abstract
     public function execute()
     {
         $this->writer->version();
-        $this->writer->line();
 
-        $this->writer->line('Global settings');
-        $this->writer->separate();
-        $this->writer->line('Default branch: ' . $this->config->default_branch);
-        $this->writer->line('Patch directory: ' . $this->config->patch_directory);
-        $this->writer->line('Patchfile prefix: ' . $this->config->patch_prefix);
-        $this->writer->line('Use color: ' . ($this->config->color?'yes':'no'));
-        $this->writer->line('Dump database before update: ' . ($this->config->dump_before_update?'yes':'no'));
-        $this->writer->line('Dump directory: ' . $this->config->dump_directory);
-
-        $this->writer->line();
-        $this->writer->line('Database settings');
-        $this->writer->separate();
-        $this->writer->line('Database adapter: ' . $this->config->db->adapter);
-        $this->writer->line('Host: ' . $this->config->db->params->host);
-        $this->writer->line('Username: ' . $this->config->db->params->dbname);
-        $this->writer->line('Password: ' . $this->config->db->params->username);
-        $this->writer->line('Database: ' . $this->config->db->params->password);
-        $this->writer->line('Charset: ' . $this->config->db->params->charset);
-        $this->writer->line('Bin directory: ' . $this->config->db->params->bin_dir);
+        $this->writer->line('Global settings')
+            ->separate()
+            ->line('Default branch: ' . $this->config->default_branch)
+            ->line('Patch directory: ' . $this->config->patch_directory)
+            ->line('Patchfile prefix: ' . $this->config->patch_prefix)
+            ->line('Use color: ' . ($this->config->color ? 'yes' : 'no'))
+            ->line('Dump database before update: ' . ($this->config->dump_before_update ? 'yes' : 'no'))
+            ->line('Dump directory: ' . $this->config->dump_directory)
+            ->line('Debug mode: ' . ($this->config->debug ? 'on' : 'off'))
+            ->line()
+            ->line('Database settings')
+            ->separate()
+            ->line('Database adapter: ' . $this->config->db->adapter)
+            ->line('Host: ' . $this->config->db->params->host)
+            ->line('Username: ' . $this->config->db->params->dbname)
+            ->line('Password: ' . $this->config->db->params->username)
+            ->line('Database: ' . $this->config->db->params->password)
+            ->line('Charset: ' . $this->config->db->params->charset)
+            ->line('Bin directory: ' . $this->config->db->params->bin_dir);
 
         if (isset($this->config->s3)) {
-            $this->writer->line();
-            $this->writer->line('S3 settings');
-            $this->writer->separate();
-            $this->writer->line('AWS key: ' . $this->config->s3->aws_key);
-            $this->writer->line('AWS secret key: ' . $this->config->s3->aws_secret_key);
-            $this->writer->line('AWS bucket: ' . $this->config->s3->aws_bucket);
+            $this->writer->line()
+                ->line('S3 settings')
+                ->separate()
+                ->line('AWS key: ' . $this->config->s3->aws_key)
+                ->line('AWS secret key: ' . $this->config->s3->aws_secret_key)
+                ->line('AWS bucket: ' . $this->config->s3->aws_bucket);
         }
         $this->writer->line();
         return;
