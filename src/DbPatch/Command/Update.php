@@ -221,6 +221,7 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
     }
 
     /**
+     * @param string $command Command name
      * @return void
      */
     public function showHelp($command = '')

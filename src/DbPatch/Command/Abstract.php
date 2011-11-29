@@ -269,7 +269,7 @@ abstract class DbPatch_Command_Abstract
     public function getPatchDirectory()
     {
         if (isset($this->config->patch_directory)) {
-            $dir = $this->config->patch_directory;
+            $dir = $this->trimTrailingSlashes($this->config->patch_directory);
         } else {
             $dir = self::PATCH_DIRECTORY;
         }
@@ -570,7 +570,7 @@ abstract class DbPatch_Command_Abstract
         }
 
         if (isset($this->config->dump_directory)) {
-            $filename = $this->config->dump_directory . '/' . $filename;
+            $filename = $this->trimTrailingSlashes($this->config->dump_directory) . '/' . $filename;
         } else {
             $filename = './' . $filename;
         }
@@ -596,5 +596,17 @@ abstract class DbPatch_Command_Abstract
                 ->indent(2)->line('--color            Show colored output');
 
     }
+
+    /**
+     * Remove trailing slash from string
+     * @param string $str String
+     * @return string
+     */
+    function trimTrailingSlashes( $str )
+    {
+        $str = trim($str);
+        return $str == '/' ? $str : rtrim($str, '/');
+    }
+
 
 }
