@@ -95,7 +95,7 @@ class DbPatch_Core_Application
         } catch (Exception $e) {
             $writer->error($e->getMessage())->line();
             $runner->showHelp();
-            exit;
+            exit(1);
         }
 
         $db = $this->getDb($config);
@@ -103,6 +103,12 @@ class DbPatch_Core_Application
         // Finally execute the right command
         try {
             $command = $console->getCommand();
+
+            if($command == '') {
+                $runner->showHelp();
+                exit(0);
+            }
+
             $runner->getCommand($command, $console)
                     ->setConfig($config)
                     ->setDb($db)
@@ -112,7 +118,7 @@ class DbPatch_Core_Application
         } catch (Exception $e) {
             $writer->error($e->getMessage())->line();
             $runner->showHelp();
-            exit;
+            exit(1);
         }
         return;
     }
