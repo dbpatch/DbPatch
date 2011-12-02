@@ -76,7 +76,7 @@ class DbPatch_Command_Runner
         return array(
             'help', 'create', 'remove', 'show',
             'status', 'sync', 'update', 'dump',
-            'info',
+            'info', 'setup'
         );
 
     }
@@ -95,7 +95,7 @@ class DbPatch_Command_Runner
                         break;
             case 'cr' : $cmd = 'create';
                         break;
-            case 're' : $cmd = 'remove';
+            case 'rm' : $cmd = 'remove';
                         break;
             case 'sh' : $cmd = 'show';
                         break;
@@ -178,6 +178,7 @@ class DbPatch_Command_Runner
                 ->indent(2)->line('status     show latest applied patches')
                 ->indent(2)->line('dump       dump database')
                 ->indent(2)->line('info       show configuration')
+                ->indent(2)->line('setup      setup a new dbpatch config file')
                 ->line()
                 ->line('see \'dbpatch help <command>\' for more information on a specific command');
     }

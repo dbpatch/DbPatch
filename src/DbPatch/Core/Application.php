@@ -82,6 +82,20 @@ class DbPatch_Core_Application
             return;
         }
 
+        // Setup command
+        if ($console->getCommand() == 'setup') {
+
+            try {
+                return $runner->getCommand('setup', $console)
+                    ->execute();
+
+            } catch (Exception $e) {
+                $writer->error($e->getMessage())->line();
+                $runner->showHelp();
+                exit(1);
+            }
+        }
+
         // Load the right config file
         try {
             $config = $this->getConfig($configFile);
