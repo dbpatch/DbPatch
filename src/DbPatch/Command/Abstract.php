@@ -541,11 +541,11 @@ abstract class DbPatch_Command_Abstract
      * @param string $filename
      * @return bool
      */
-    protected function dumpDatabase($filename)
+    protected function dumpDatabase($filename, $noData = false)
     {
         try {
             $db = $this->getDb();
-            $db->dump($filename);
+            $db->dump($filename, $noData);
         } catch (Exception $e) {
             $this->writer->error($e->getMessage());
             return false;

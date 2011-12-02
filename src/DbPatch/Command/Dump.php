@@ -71,9 +71,10 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
         $database = $this->config->db->params->dbname;
 
         $moveToS3 = ($this->console->issetOption('s3')) ? true : false;
+        $noData = ($this->console->issetOption('no-data')) ? true : false;
 
-        $this->writer->line('Dumping database ' . $database . ' to file ' . $filename);
-        $this->dumpDatabase($filename);
+        $this->writer->line('Dumping database ' . ($noData ? 'schema ' : '') . $database . ' to file ' . $filename);
+        $this->dumpDatabase($filename, $noData);
 
         if ($moveToS3) {
             $this->moveDumpToS3($filename);
@@ -145,6 +146,7 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
         $writer = $this->getWriter();
         $writer->indent(2)->line('--file=<string>    Filename')
             ->indent(2)->line('--s3               Copy the file to S3 (add S3 credentials to the config)')
+            ->indent(2)->line('--no-data          Only dump the schema and no data')
             ->line();
     }
 }

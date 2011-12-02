@@ -68,6 +68,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
      */
     protected $_bin_dir = '';
 
+    protected $_console = array();
 
     /**
      * @param array $config
@@ -126,9 +127,9 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
      * @param string $filename
      * @return bool
      */
-    public function dump($filename)
+    public function dump($filename, $noData = false)
     {
-        $commandArgs = $this->getShellCommandArgs();
+        $commandArgs = $this->getShellCommandArgs($noData);
         $filename = escapeshellarg($filename);
 
         $command = 'mysqldump';
@@ -161,7 +162,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
      * Get all shell command args
      * @return string
      */
-    protected function getShellCommandArgs()
+    protected function getShellCommandArgs($noData = false)
     {
         $database   = '';
         if (isset($this->_config['dbname']) && $this->_config['dbname']) {
@@ -194,14 +195,20 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
                        escapeshellarg($this->_config['charset']);
         }
 
+        $data = '';
+        if ($noData) {
+            $data = '--no-data';
+        }
+
         return sprintf(
-            '%s %s %s %s %s %s',
+            '%s %s %s %s %s %s %s',
             $host,
             $user,
             $password,
             $port,
             $charset,
-            $database
+            $database,
+            $data
         );
 
     }
