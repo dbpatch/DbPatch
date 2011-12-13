@@ -374,7 +374,7 @@ abstract class DbPatch_Command_Abstract
     /**
      * Detect the different branches that are used in the patch dir
      * the default branch is always returned
-     * 
+     *
      * @return array
      */
     protected function detectBranches()
@@ -432,16 +432,14 @@ abstract class DbPatch_Command_Abstract
 
     /**
      * Checks if the changelog table is present in the database
-     * 
+     *
      * @return bool
      */
     protected function changelogExists()
     {
         try {
             $db = $this->getDb();
-            $result = $db->fetchOne(
-                $db->quoteInto('SHOW TABLES LIKE ?', self::TABLE)
-            );
+            $result = $db->changeLogExists(self::TABLE);
             return (bool)($result == self::TABLE);
         } catch (Zend_Db_Adapter_Exception $e) {
             throw new DbPatch_Exception('Database error: ' . $e->getMessage());
@@ -464,20 +462,7 @@ abstract class DbPatch_Command_Abstract
 
         $db = $this->getDb();
 
-        $db->query(
-            sprintf("
-            CREATE TABLE %s (
-            `patch_number` int(11) NOT NULL,
-            `branch` varchar(50) NOT NULL,
-            `completed` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-            `filename` varchar(100) NOT NULL,
-            `hash` varchar(32) NOT NULL,
-            `description` varchar(200) default NULL,
-            PRIMARY KEY  (`patch_number`, `branch`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
-                    $db->quoteIdentifier(self::TABLE)
-            ));
-        $db->commit();
+        $db->createChangeLog(self::TABLE);
 
         if (!$this->changelogExists()) {
             return false;
@@ -491,7 +476,7 @@ abstract class DbPatch_Command_Abstract
 
     /**
      * Store patchfile entry to the changelog table
-     * 
+     *
      * @param array $patchFile
      * @param string $description
      * @return void
@@ -514,8 +499,8 @@ abstract class DbPatch_Command_Abstract
             $db = $this->getDb();
 
             $sql = sprintf("
-                INSERT INTO %s (patch_number, branch, completed, filename, description, hash)
-                VALUES(%d, %s, NOW(), %s, %s, %s)",
+                INSERT INTO %s (patch_number, branch, filename, description, hash)
+                VALUES(%d, %s, %s, %s, %s)",
                            $db->quoteIdentifier(self::TABLE),
                            $patchFile->patch_number,
                            $db->quote($patchFile->branch),
@@ -525,7 +510,6 @@ abstract class DbPatch_Command_Abstract
             );
 
             $db->query($sql);
-            $db->commit();
             $this->writer->line(
                 sprintf(
                     'added %s to the changelog ',
@@ -569,7 +553,7 @@ abstract class DbPatch_Command_Abstract
             $filename = $database . '_' . date('Ymd_His') . '.sql';
         }
 
-        if (isset($this->config->dump_directory)) {
+        if (isset($this->config->dump_directory) && $this->config->dump_directory != '') {
             $filename = $this->trimTrailingSlashes($this->config->dump_directory) . '/' . $filename;
         } else {
             $filename = './' . $filename;
@@ -580,7 +564,7 @@ abstract class DbPatch_Command_Abstract
 
     /**
      * Show help options for a given command
-     * 
+     *
      * @param string $command
      * @return void
      */

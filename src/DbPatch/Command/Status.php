@@ -92,7 +92,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
                 $limit = count($patches);
             }
             for ($i = 0; $i < $limit; $i++) {
-                
+
                 $this->writer->line(sprintf("%04d | %s | %s | %s",
                                             $patches[$i]['patch_number'],
                                             $patches[$i]['completed'],
@@ -110,7 +110,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
     protected function showChangedPatches($patches)
     {
         if (count($patches) == 0) return;
-        
+
         $patchDirectory = $this->getPatchDirectory();
         if (is_dir($patchDirectory)) {
             foreach($patches as $patch) {
@@ -175,7 +175,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
 
     /**
      * Get list of patches that are applied
-     * 
+     *
      * @param string $branch
      * @return array
      */
@@ -188,6 +188,8 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
             $where = 'WHERE branch =\'' . $db->escapeSQL($branch) . '\'';
         }
 
+        return $db->getAppliedPatches($where, self::DEFAULT_BRANCH, self::TABLE);
+        /*
         $sql = sprintf("
             SELECT
                 `patch_number`,
@@ -206,6 +208,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
         );
 
         return $db->fetchAll($sql);
+        */
     }
 
     /**

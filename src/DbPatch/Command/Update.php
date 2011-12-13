@@ -170,7 +170,8 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
         if ($branch != '') {
             $where = 'WHERE branch = ' . $db->quote($branch);
         }
-
+        return $db->getAppliedPatches($where, self::DEFAULT_BRANCH, self::TABLE);
+/*
         $sql = sprintf("
             SELECT
                 `patch_number`,
@@ -189,6 +190,7 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
         );
 
         return $db->fetchAll($sql);
+*/
     }
 
 

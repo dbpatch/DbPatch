@@ -48,7 +48,7 @@
  */
 
 /**
- * Extended Mysqli adapter that adds 2 new functions for using the mysql
+ * Extended Sqlite adapter that adds new functions for using the sqlite3
  * binaries.
  *
  * @package DbPatch
@@ -59,16 +59,14 @@
  * @copyright 2010-2011 Martijn De Letter
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
- * @since File available since Release 1.0.0
+ * @since File available since Release 1.0.2
  */
-class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
+class DbPatch_Db_Adapter_Pdo_Sqlite extends Zend_Db_Adapter_Pdo_Sqlite
 {
     /**
      * @var string
      */
     protected $_bin_dir = '';
-
-    protected $_console = array();
 
     /**
      * @param array $config
@@ -82,7 +80,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
     }
 
     /**
-     * Import SQL files with Mysql Binary
+     * Import SQL files with Sqlite3 Binary
      * @throws DbPatch_Exception
      * @param string $filename
      * @return bool
@@ -92,7 +90,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         $commandArgs = $this->getShellCommandArgs();
         $filename = escapeshellarg($filename);
 
-        $command = "mysql";
+        $command = "sqlite3";
 
         if (isset($this->_config['bin_dir']) && $this->_config['bin_dir']) {
             $command = $this->_config['bin_dir'] . '/' . $command;
@@ -107,22 +105,23 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
 
         exec($commandLine, $result, $return);
 
-		if ($return <> 0) {
+        if ($return <> 0) {
             throw new DbPatch_Exception(
                 'Error importing file ' .
-                $filename .
-                "\n" .
-                $commandLine .
-                "\n" .
-                implode(PHP_EOL, $result)
+                    $filename .
+                    "\n" .
+                    $commandLine .
+                    "\n" .
+                    implode(PHP_EOL, $result)
             );
         }
+        $this->closeConnection();
         return true;
 
     }
 
     /**
-     * Dump database with MysqlDump binary
+     * Dump database with Sqlite3 binary
      * @throws DbPatch_Exception
      * @param string $filename
      * @return bool
@@ -132,7 +131,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         $commandArgs = $this->getShellCommandArgs($noData);
         $filename = escapeshellarg($filename);
 
-        $command = 'mysqldump';
+        $command = 'sqlite3';
 
         if (isset($this->_config['bin_dir']) && $this->_config['bin_dir']) {
             $command = $this->_config['bin_dir'] . '/' . $command;
@@ -148,15 +147,16 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
         if ($return <> 0) {
             throw new DbPatch_Exception(
                 'Error dumping file ' .
-                $filename .
-                "\n" .
-                $commandLine .
-                "\n" .
-                implode(PHP_EOL, $result)
+                    $filename .
+                    "\n" .
+                    $commandLine .
+                    "\n" .
+                    implode(PHP_EOL, $result)
             );
         }
         return true;
     }
+
 
     /**
      * Get all shell command args
@@ -164,49 +164,18 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
      */
     protected function getShellCommandArgs($noData = false)
     {
-        $database   = '';
+        $database = '';
         if (isset($this->_config['dbname']) && $this->_config['dbname']) {
             $database = escapeshellarg($this->_config['dbname']);
         }
 
-        $user = '';
-        if (isset($this->_config['username']) && $this->_config['username']) {
-            $user = '-u ' . escapeshellarg($this->_config['username']);
-        }
-
-        $password = '';
-        if (isset($this->_config['password']) && $this->_config['password']) {
-            $password = '-p' . escapeshellarg($this->_config['password']);
-        }
-
-        $host = '';
-        if (isset($this->_config['host']) && $this->_config['host']) {
-            $host = '-h ' . escapeshellarg($this->_config['host']);
-        }
-
-        $port = '';
-        if (isset($this->_config['port']) && $this->_config['port']) {
-            $port = '-P' . (int)$this->_config['port'];
-        }
-
-        $charset = '';
-        if (isset($this->_config['charset']) && $this->_config['charset']) {
-            $charset = '--default-character-set=' .
-                       escapeshellarg($this->_config['charset']);
-        }
-
-        $data = '';
+        $data = '.dump';
         if ($noData) {
-            $data = '--no-data';
+            $data = '.schema';
         }
 
         return sprintf(
-            '%s %s %s %s %s %s %s',
-            $host,
-            $user,
-            $password,
-            $port,
-            $charset,
+            '%s %s',
             $database,
             $data
         );
@@ -220,7 +189,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
     public function changeLogExists($table)
     {
         $result = $this->fetchOne(
-            $this->quoteInto('SHOW TABLES LIKE ?', $table)
+            $this->quoteInto('SELECT `name` FROM `sqlite_master` WHERE `type` = "table" AND `name` = ?', $table)
         );
         return $result;
     }
@@ -235,15 +204,22 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
             CREATE TABLE %s (
             `patch_number` int(11) NOT NULL,
             `branch` varchar(50) NOT NULL,
-            `completed` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+            `completed` timestamp NOT NULL default CURRENT_TIMESTAMP,
             `filename` varchar(100) NOT NULL,
             `hash` varchar(32) NOT NULL,
             `description` varchar(200) default NULL,
             PRIMARY KEY  (`patch_number`, `branch`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
+            )",
                 $this->quoteIdentifier($table)
             ));
-        $this->commit();
+
+
+        $this->query("CREATE TRIGGER insert_".$table."_completed AFTER  INSERT ON ".$table."
+                         BEGIN
+                          UPDATE ".$table." SET completed = DATETIME('NOW')  WHERE rowid = new.rowid;
+                         END;
+                     ");
+
 
     }
 
@@ -262,7 +238,7 @@ class DbPatch_Db_Adapter_Mysqli extends Zend_Db_Adapter_Mysqli
                 `filename`,
                 `description`,
                 `hash`,
-                IF(`branch`='%s',0,1) as `branch_order`
+                case when `branch`='%s' then 0 else 1 end as `branch_order`
             FROM `%s`
             %s
             ORDER BY `completed` DESC, `branch_order` ASC, `patch_number` DESC

@@ -88,7 +88,7 @@ class DbPatch_Command_Remove extends DbPatch_Command_Abstract
 
     /**
      * Remove patch from the changelog table
-     * 
+     *
      * @param int $patchNumber
      * @param string $branchName
      * @return void
@@ -136,7 +136,6 @@ class DbPatch_Command_Remove extends DbPatch_Command_Abstract
                              $patchNumber);
 
             $db->query($query);
-            $db->commit();
             $this->getWriter()->line("Removed patch $patchNumber {$branchMsg}in the `" . self::TABLE . "` table");
         }
     }
