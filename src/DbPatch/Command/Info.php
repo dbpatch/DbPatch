@@ -91,9 +91,9 @@ class DbPatch_Command_Info extends DbPatch_Command_Abstract
             ->separate()
             ->line('Database adapter: ' . $this->config->db->adapter)
             ->line('Host: ' . $this->config->db->params->host)
-            ->line('Username: ' . $this->config->db->params->dbname)
-            ->line('Password: ' . $this->config->db->params->username)
-            ->line('Database: ' . $this->config->db->params->password)
+            ->line('Database: ' . $this->config->db->params->dbname)
+            ->line('Username: ' . $this->config->db->params->username)
+            ->line('Password: ' . $this->config->db->params->password)
             ->line('Charset: ' . $this->config->db->params->charset)
             ->line('Bin directory: ' . $this->config->db->params->bin_dir);
 
