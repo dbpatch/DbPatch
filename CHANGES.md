@@ -16,7 +16,11 @@ Changes in DbPatch 1.x.x
 
 \+ Added correct exit status
 
-\+ Optimized status and show commands (less memory usage)
+\* Fixed bug in the info command
+
+\+ Added support for Sqlite3
+
+\* Optimized status and show commands (less memory usage)
 
 Changes in DbPatch 1.0.1
 ------------------------
