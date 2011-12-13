@@ -120,7 +120,7 @@ class DbPatch_Core_Application
             $runner->showHelp();
             exit(1);
         }
-        return;
+        exit(0);
     }
 
     /**
