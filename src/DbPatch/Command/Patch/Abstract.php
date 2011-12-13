@@ -49,7 +49,7 @@
 
 /**
  * Abstract Patch file
- * 
+ *
  * @package DbPatch
  * @subpackage Command_Patch
  * @author Sandy Pleyte
@@ -85,7 +85,7 @@ abstract class DbPatch_Command_Patch_Abstract
 
     /**
      * Creates a new value object
-     * 
+     *
      * @param array $values the values to fill the value object with.
      * If left empty we're creating an empty value object.
      * @return void
@@ -219,7 +219,7 @@ abstract class DbPatch_Command_Patch_Abstract
 
     /**
      * Check if a value isset
-     * 
+     *
      * @throws DbPatch_Exception
      * @param string $name Name of the property
      * @return bool
@@ -327,7 +327,22 @@ abstract class DbPatch_Command_Patch_Abstract
      */
     protected function getComment($lineNumber)
     {
-        $lines = file($this->filename);
+        // Read first line(s)
+        $lines = array();
+        $fp = @fopen($this->filename, "r");
+        if ($fp) {
+            $counter = 0;
+            while (!feof($fp) && $counter <= $lineNumber) {
+                $lines[] = fgets($fp, 4096);
+                $counter++;
+            }
+            fclose($fp);
+        }
+
+        if (count($lines) == 0) {
+            return '';
+        }
+
         $line = $lines[$lineNumber];
         $comment = '';
 
@@ -353,12 +368,21 @@ abstract class DbPatch_Command_Patch_Abstract
 
     /**
      * Echo contents of the patch
-     * 
+     *
      * @return void
      */
     public function show()
     {
-        echo "\n" . file_get_contents($this->filename) . "\n";
+        $fp = @fopen($this->filename, "r");
+        if ($fp) {
+            echo PHP_EOL;
+            while (!feof($fp)) {
+                $line = fgets($fp, 4096);
+                echo $line . PHP_EOL;
+            }
+            fclose($fp);
+            echo PHP_EOL;
+        }
     }
 
     /**
