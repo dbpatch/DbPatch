@@ -120,13 +120,13 @@ class DbPatch_Core_Config
 
     /**
      * Detect config type based on file extension
-     * 
+     *
      * @param string $filename
      * @return string
      */
     protected function detectConfigType($filename)
     {
-        return strtolower(end(explode('.', $filename)));
+        return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
 
     /**
