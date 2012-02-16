@@ -244,7 +244,9 @@ abstract class DbPatch_Command_Abstract
         if ($this->console instanceof DbPatch_Core_Console &&
             $this->console->issetOption('branch')
         ) {
-            return $this->console->getOptionValue('branch', self::DEFAULT_BRANCH);
+            return $this->console->getOptionValue('branch');
+        } else if (isset($this->config->default_branch)) {
+            return $this->config->default_branch;
         } else {
             return self::DEFAULT_BRANCH;
         }
