@@ -73,11 +73,14 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
 
         $latestPatchNumber = $this->getLastPatchNumber($branch);
 
+        if ($branch != self::DEFAULT_BRANCH) {
+            $this->writer->line('Branch: ' . $branch);
+        }
         $this->writer->line('last patch number applied: ' . $latestPatchNumber);
         $patchFiles = $this->getPatches($branch);
 
         if (count($patchFiles) == 0) {
-            $this->writer->success("no update needed");
+            $this->writer->success("no update needed " . ($branch != self::DEFAULT_BRANCH ? 'for branch ' . $branch : ''));
             return;
         }
 

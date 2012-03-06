@@ -144,6 +144,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
         $this->getWriter()->line($line)->separate();
 
         $patches = $this->getPatches($branch);
+        $defaultBranch = $this->getDefaultBranch();
 
         if (count($patches) == 0) {
             $this->getWriter()->line("no patches found")->line();
@@ -156,7 +157,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
             }
 
             $line = "use 'dbpatch update";
-            if ($branch <> self::DEFAULT_BRANCH) {
+            if ($branch != $defaultBranch) {
                 $line .= " --branch={$branch}";
             }
             $line .= "' to apply the patches\n";
@@ -171,6 +172,12 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
     {
         $limit = $this->config->get('limit', self::LIMIT);
         return $limit;
+    }
+
+    protected function getDefaultBranch()
+    {
+        $defaultBranch = $this->config->get('default_branch', self::DEFAULT_BRANCH);
+        return $defaultBranch;
     }
 
     /**
