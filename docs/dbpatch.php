@@ -1,6 +1,6 @@
 <?php
 
-$dbPatchConfig = array(
+return array(
     'limit' => 10,
     'default_branch' => 'default',
     'patch_directory' => '../patches',
@@ -21,3 +21,11 @@ $dbPatchConfig = array(
         )
     )
 );
+
+// Or, optionally retrieve an adapter object from the application:
+//
+// /* bootstrap your application here  */
+// return array(
+//     /* ... */
+//     'db' => $bootstrap->getResource('db'),
+// );
