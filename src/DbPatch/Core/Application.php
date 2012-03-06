@@ -99,7 +99,7 @@ class DbPatch_Core_Application
         // Load the right config file
         try {
             $config = $this->getConfig($configFile);
-            if ($useColor || $config->color) {
+            if ($useColor || (isset($config->color) && $config->color)) {
                 $writer->setColor($this->getWriterColor());
             }
             if(isset($config->debug) && $config->debug) {
@@ -112,10 +112,9 @@ class DbPatch_Core_Application
             exit(1);
         }
 
-        $db = $this->getDb($config);
-
         // Finally execute the right command
         try {
+            $db = $this->getDb($config);
             $command = $console->getCommand();
 
             if($command == '') {
@@ -158,12 +157,12 @@ class DbPatch_Core_Application
 
     /**
      * @param \Zend_Config|\Zend_Config_Ini|\Zend_Config_Xml $config
-     * @return null|Zend_Db_Adapter_Abstract
+     * @return null|DbPatch_Core_Db
      */
     protected function getDb($config)
     {
         $db = new DbPatch_Core_Db($config);
-        return $db->getDb();
+        return $db;
     }
 
     /**

@@ -83,7 +83,7 @@ abstract class DbPatch_Command_Abstract
     const PATCH_PREFIX = 'patch';
 
     /**
-     * @var \Zend_Db_Adapter_Abstract
+     * @var \DbPatch_Core_Db
      */
     protected $db = null;
 
@@ -126,10 +126,10 @@ abstract class DbPatch_Command_Abstract
     }
 
     /**
-     * @param Zend_Db_Adapter_Abstract $db
+     * @param DbPatch_Core_Db $db
      * @return DbPatch_Command_Abstract
      */
-    public function setDb(Zend_Db_Adapter_Abstract $db)
+    public function setDb(DbPatch_Core_Db $db)
     {
         $this->db = $db;
         return $this;
@@ -289,11 +289,11 @@ abstract class DbPatch_Command_Abstract
      */
     protected function isPatchApplied($patchNumber, $branch)
     {
-        $db = $this->getDb();
+        $db = $this->getDb()->getAdapter();
         $query = sprintf("SELECT COUNT(patch_number) as applied
                           FROM %s
-                          WHERE `patch_number` = %d
-                          AND `branch` = %s",
+                          WHERE patch_number = %d
+                          AND branch = %s",
                          $db->quoteIdentifier(self::TABLE),
                          $patchNumber,
                          $db->quote($branch));
@@ -434,19 +434,21 @@ abstract class DbPatch_Command_Abstract
 
     /**
      * Checks if the changelog table is present in the database
-     *
+     * @todo catch statement exceptions?
      * @return bool
      */
     protected function changelogExists()
     {
         try {
-            $db = $this->getDb();
-            $result = $db->changeLogExists(self::TABLE);
-            return (bool)($result == self::TABLE);
+            $db = $this->getDb()->getAdapter();
+            $result = $db->fetchOne(sprintf(
+                'SELECT * FROM %s WHERE 0=1', $db->quoteIdentifier(self::TABLE)
+            ));
+            return true;
         } catch (Zend_Db_Adapter_Exception $e) {
             throw new DbPatch_Exception('Database error: ' . $e->getMessage());
         } catch (Exception $e) {
-            throw new DbPatch_Exception('Can\'t check if the changelog table exists: ' . $e->getMessage());
+            return false;
         }
 
     }
@@ -462,9 +464,21 @@ abstract class DbPatch_Command_Abstract
             return true;
         }
 
-        $db = $this->getDb();
+        $db = $this->getDb()->getAdapter();
 
-        $db->createChangeLog(self::TABLE);
+        $db->query(
+            sprintf("
+             CREATE TABLE %s (
+             patch_number int NOT NULL,
+             branch varchar(50) NOT NULL,
+             completed int,
+             filename varchar(100) NOT NULL,
+             hash varchar(32) NOT NULL,
+             description varchar(200) default NULL,
+             PRIMARY KEY  (patch_number, branch)
+        )", $db->quoteIdentifier(self::TABLE)
+            ));
+
 
         if (!$this->changelogExists()) {
             return false;
@@ -485,7 +499,6 @@ abstract class DbPatch_Command_Abstract
      */
     protected function addToChangelog($patchFile, $description = null)
     {
-
         if ($description == null) {
             $description = $patchFile->description;
         }
@@ -498,14 +511,15 @@ abstract class DbPatch_Command_Abstract
                  )
              );
          } else {
-            $db = $this->getDb();
+            $db = $this->getDb()->getAdapter();
 
             $sql = sprintf("
-                INSERT INTO %s (patch_number, branch, filename, description, hash)
-                VALUES(%d, %s, %s, %s, %s)",
+                INSERT INTO %s (patch_number, branch, completed, filename, description, hash)
+                VALUES(%d, %s, %d, %s, %s, %s)",
                            $db->quoteIdentifier(self::TABLE),
                            $patchFile->patch_number,
                            $db->quote($patchFile->branch),
+                           time(),
                            $db->quote($patchFile->basename),
                            $db->quote($description),
                            $db->quote($patchFile->hash)
@@ -546,7 +560,9 @@ abstract class DbPatch_Command_Abstract
     protected function getDumpFilename()
     {
         $filename = null;
-        $database = $this->config->db->params->dbname;
+        $config = $this->getDb()->getAdapter()->getConfig();
+        $database = $config['dbname'];
+
         if ($this->console->issetOption('file')) {
             $filename = $this->console->getOptionValue('file', null);
         }
@@ -555,7 +571,7 @@ abstract class DbPatch_Command_Abstract
             $filename = $database . '_' . date('Ymd_His') . '.sql';
         }
 
-        if (isset($this->config->dump_directory) && $this->config->dump_directory != '') {
+        if (!empty($this->config->dump_directory)) {
             $filename = $this->trimTrailingSlashes($this->config->dump_directory) . '/' . $filename;
         } else {
             $filename = './' . $filename;

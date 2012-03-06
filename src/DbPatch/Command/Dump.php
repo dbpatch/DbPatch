@@ -68,7 +68,8 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
     public function execute()
     {
         $filename = $this->getDumpFilename($this->config);
-        $database = $this->config->db->params->dbname;
+        $config   = $this->getDb()->getAdapter()->getConfig();
+        $database = $config['dbname'];
 
         $moveToS3 = ($this->console->issetOption('s3')) ? true : false;
         $noData = ($this->console->issetOption('no-data')) ? true : false;

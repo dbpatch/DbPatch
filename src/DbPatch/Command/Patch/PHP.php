@@ -92,11 +92,11 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
         }
 
         try {
-            // retrieve db object for use in php patch file
             $patchNumberSize = $this->getPatchNumberSize($this->getConfig()->patch_directory);
             $patchClassName = 'DbPatchPHPPatch' . str_pad($this->patchNumber, $patchNumberSize, '0', STR_PAD_LEFT);
 
-            $db = $this->getDb();
+            // retrieve db adapter object for use in php patch file
+            $db = $this->getDb()->getAdapter();
             $config = $this->getConfig();
             $writer = $this->getWriter();
 
