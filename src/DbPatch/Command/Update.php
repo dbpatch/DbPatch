@@ -118,7 +118,7 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
             }
 
             if (in_array($patchNr, $patchNumbersToSkip)) {
-                $this->writer->line('manually skiped patch ' . $patchFile->basename);
+                $this->writer->line('manually skipped patch ' . $patchFile->basename);
                 $this->addToChangelog($patchFile, 'manually skipped');
                 $latestPatchNumber = $patchFile->patch_number;
                 continue;
