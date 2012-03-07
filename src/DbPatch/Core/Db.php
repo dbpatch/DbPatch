@@ -208,7 +208,7 @@ class DbPatch_Core_Db
             $dir = '';
 
             if (isset($this->config->db->bin_dir)) {
-                $dir = $this->config->db->bin_dir;
+                $dir = $this->config->db->bin_dir . DIRECTORY_SEPARATOR;
             }
 
             $this->config->dump_command = "{$dir}mysqldump {$options} > :filename 2>&1";
@@ -218,7 +218,7 @@ class DbPatch_Core_Db
             $dir = '';
 
             if (isset($this->config->db->bin_dir)) {
-                $dir = $this->config->db->bin_dir;
+                $dir = $this->config->db->bin_dir . DIRECTORY_SEPARATOR;
             }
 
             $this->config->import_command = "{$dir}mysql {$options} < :filename 2>&1";
