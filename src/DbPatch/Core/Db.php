@@ -89,13 +89,8 @@ class DbPatch_Core_Db
                 $config->db->adapter, $config->db->params->toArray()
             );
         }
-        // this method provides backward compatibility for
-        // the 'bin_dir' configuration option. it could be
-        // removed in future versions. using bin_dir only
-        // is not sufficient because it limits the user to
-        // mysql/mysqldump. it's also not possible to use
-        // bin_dir and pass a Zend_Db_Adapter instance as
-        // configuration value.
+
+        // Enable compatibility for the bin_dir setting
         $this->enableOldConfigCompatibility();
     }
 
@@ -116,7 +111,8 @@ class DbPatch_Core_Db
     }
 
     /**
-     * Import SQL files with Mysql Binary
+     * Import a SQL file
+     *
      * @throws DbPatch_Exception
      * @param string $filename
      * @return bool
@@ -142,7 +138,8 @@ class DbPatch_Core_Db
     }
 
     /**
-     * Dump database with MysqlDump binary
+     * Dump database to file
+     *
      * @throws DbPatch_Exception
      * @param string $filename
      * @return bool
@@ -196,7 +193,13 @@ class DbPatch_Core_Db
     }
 
     /**
-     * Enable compatibility for the bin_dir setting
+     * This method provides backward compatibility for
+     * the 'bin_dir' configuration option. it could be
+     * removed in future versions. using bin_dir only
+     * is not sufficient because it limits the user to
+     * mysql/mysqldump. it's also not possible to use
+     * bin_dir and pass a Zend_Db_Adapter instance as
+     * configuration value.
      *
      * @return DbPatch_Core_Db
      */
