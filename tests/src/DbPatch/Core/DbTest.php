@@ -14,7 +14,7 @@ class DbTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(is_object($db));
 
-        $this->assertTrue(is_object($db->getDb()));
-        $this->assertTrue($db->getDb() instanceof Zend_Db_Adapter_Abstract);
+        $this->assertTrue(is_object($db->getAdapter()));
+        $this->assertTrue($db->getAdapter() instanceof Zend_Db_Adapter_Abstract);
     }
 }
