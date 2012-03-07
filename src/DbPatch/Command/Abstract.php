@@ -434,17 +434,14 @@ abstract class DbPatch_Command_Abstract
 
     /**
      * Checks if the changelog table is present in the database
-     * @todo catch statement exceptions?
      * @return bool
      */
     protected function changelogExists()
     {
         try {
-            $db = $this->getDb()->getAdapter();
-            $result = $db->fetchOne(sprintf(
-                'SELECT * FROM %s WHERE 0=1', $db->quoteIdentifier(self::TABLE)
-            ));
-            return true;
+            return in_array(
+                self::TABLE, $this->getDb()->getAdapter()->listTables()
+            );
         } catch (Zend_Db_Adapter_Exception $e) {
             throw new DbPatch_Exception('Database error: ' . $e->getMessage());
         } catch (Exception $e) {
