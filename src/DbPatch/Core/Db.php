@@ -207,7 +207,7 @@ class DbPatch_Core_Db
     {
         $options = '-h:host -P\':port\' -u:username -p\':password\' --default-character-set=:charset :dbname';
 
-        if (!isset($this->config->dump_command) && !isset($this->config->import_command)) {
+        if (!isset($this->config->dump_command)) {
             $dir = '';
 
             if (isset($this->config->db->bin_dir)) {
@@ -217,7 +217,7 @@ class DbPatch_Core_Db
             $this->config->dump_command = "{$dir}mysqldump {$options} > :filename 2>&1";
         }
 
-        if (!isset($this->config->import_command) && !isset($this->config->import_command)) {
+        if (!isset($this->config->import_command)) {
             $dir = '';
 
             if (isset($this->config->db->bin_dir)) {
