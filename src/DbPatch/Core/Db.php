@@ -164,6 +164,20 @@ class DbPatch_Core_Db
     }
 
     /**
+     * Reconnect to the database, this will create 
+     * a new adapter instance.
+     *
+     * @return DbPatch_Core_Db
+     */
+    public function reconnect()
+    {
+        // this simulates unserialize(serialize($obj)) without
+        // actually serializing
+        $this->getAdapter()->__sleep();
+        $this->getAdapter()->__wakeup();
+    }
+
+    /**
      * @param string $command Shell command template to execute,
      *                takes :configkey notation
      * @param string $filename Filename of patch or dump file
