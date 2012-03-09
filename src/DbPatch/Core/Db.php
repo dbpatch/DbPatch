@@ -186,24 +186,18 @@ class DbPatch_Core_Db
     protected function getCliCommand($command, $filename)
     {
         $config = $this->getAdapter()->getConfig();
-        $config['filename'] = $filename;
 
-        foreach (array(
-                     'host', 'port', 'username', 'password', 'dbname', 'charset', 'filename'
-                 ) as $key) {
-            $value = !empty($config[$key])
-                ? escapeshellarg($config[$key])
-                : '';
+        $params = array();
+        $params['filename'] = $filename;
 
-            $command = str_replace(":$key", $value, $command);
+        $keys = array('host', 'port', 'username', 'password', 'dbname', 'charset', 'filename');
+        foreach ($keys as $key) {
+            if (isset($config[$key])) {
+                $params[$key] = escapeshellarg($config[$key]);
+            }
         }
 
-        // do not send options if empty and optional
-        //! @todo not really elegant, works fine for mysql
-        return str_replace(array(
-            '-p\'\'', '--password=\'\'',
-            '-P\'\'', '--port=\'\'',
-        ), '', $command);
+        return DbPatch_Core_Parser::parse($command, $params);
     }
 
     /**
@@ -219,7 +213,7 @@ class DbPatch_Core_Db
      */
     protected function enableOldConfigCompatibility()
     {
-        $options = '-h:host -P\':port\' -u:username -p\':password\' --default-character-set=:charset :dbname';
+        $options = '-h{host} {%port%}-P{port} {%port%}-u{username} {%password%}-p{password} {%password%}--default-character-set={charset} {dbname}';
 
         if (!isset($this->config->dump_command)) {
             $dir = '';
@@ -228,7 +222,7 @@ class DbPatch_Core_Db
                 $dir = $this->config->db->bin_dir . DIRECTORY_SEPARATOR;
             }
 
-            $this->config->dump_command = "{$dir}mysqldump {$options} > :filename 2>&1";
+            $this->config->dump_command = "{$dir}mysqldump {$options} > {filename} 2>&1";
         }
 
         if (!isset($this->config->import_command)) {
@@ -238,7 +232,7 @@ class DbPatch_Core_Db
                 $dir = $this->config->db->bin_dir . DIRECTORY_SEPARATOR;
             }
 
-            $this->config->import_command = "{$dir}mysql {$options} < :filename 2>&1";
+            $this->config->import_command = "{$dir}mysql {$options} < {filename} 2>&1";
         }
 
         return $this;

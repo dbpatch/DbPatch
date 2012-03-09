@@ -31,21 +31,4 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($config instanceof DbPatch_Core_Config);
         $this->assertTrue($config->getConfig() instanceof Zend_Config_Xml);
     }
-
-    /**
-     * @expectedException DbPatch_Exception
-     */
-    public function testInvalidConfigFile()
-    {
-        $filename = 'docs/LICENCE';
-        $config = new DbPatch_Core_Config($filename);
-    }
-
-    /**
-     * @expectedException DbPatch_Exception
-     */
-    public function testSearchConfig()
-    {
-        $config = new DbPatch_Core_Config();
-    }
 }
