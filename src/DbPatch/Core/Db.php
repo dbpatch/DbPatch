@@ -192,7 +192,7 @@ class DbPatch_Core_Db
 
         $keys = array('host', 'port', 'username', 'password', 'dbname', 'charset', 'filename');
         foreach ($keys as $key) {
-            if (isset($config[$key])) {
+            if (isset($config[$key]) && !empty($config[$key])) {
                 $params[$key] = escapeshellarg($config[$key]);
             }
         }
