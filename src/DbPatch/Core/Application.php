@@ -64,6 +64,11 @@
 class DbPatch_Core_Application
 {
     /**
+     * @var Zend_Config $config
+     */
+    protected $config = null;
+
+    /**
      * Initialize the dbpatch application
      * Typically called from bin/dbpatch.php
      * @return void
@@ -98,7 +103,12 @@ class DbPatch_Core_Application
 
         // Load the right config file
         try {
-            $config = $this->getConfig($configFile);
+            if ($this->config === null) {
+                $config = $this->getConfig($configFile);
+            } else {
+                $config = $this->config;
+            }
+
             if ($useColor || (isset($config->color) && $config->color)) {
                 $writer->setColor($this->getWriterColor());
             }
@@ -153,6 +163,11 @@ class DbPatch_Core_Application
     {
         $config = new DbPatch_Core_Config($filename);
         return $config->getConfig();
+    }
+
+    public function setConfig(Zend_Config $config)
+    {
+        $this->config = $config;
     }
 
     /**
