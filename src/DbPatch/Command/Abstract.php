@@ -565,7 +565,9 @@ abstract class DbPatch_Command_Abstract
         }
 
         if (is_null($filename)) {
-            $filename = $database . '_' . date('Ymd_His') . '.sql';
+            // split by slash, database name can be a path (in case of SQLite)
+            $parts    = explode(DIRECTORY_SEPARATOR, $database);
+            $filename = array_pop($parts) . '_' . date('Ymd_His') . '.sql';
         }
 
         if (!empty($this->config->dump_directory)) {
