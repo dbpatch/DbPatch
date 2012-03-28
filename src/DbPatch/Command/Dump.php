@@ -71,10 +71,8 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
         $config   = $this->getDb()->getAdapter()->getConfig();
         $database = $config['dbname'];
 
-        $noData = ($this->console->issetOption('no-data')) ? true : false;
-
-        $this->writer->line('Dumping database ' . ($noData ? 'schema ' : '') . $database . ' to file ' . $filename);
-        $this->dumpDatabase($filename, $noData);
+        $this->writer->line('Dumping database ' . $database . ' to file ' . $filename);
+        $this->dumpDatabase($filename);
 
         return;
     }
@@ -97,7 +95,6 @@ class DbPatch_Command_Dump extends DbPatch_Command_Abstract
 
         $writer = $this->getWriter();
         $writer->indent(2)->line('--file=<string>    Filename')
-            ->indent(2)->line('--no-data          Only dump the schema and no data')
             ->line();
     }
 }
