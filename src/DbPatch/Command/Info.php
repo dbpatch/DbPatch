@@ -103,14 +103,6 @@ class DbPatch_Command_Info extends DbPatch_Command_Abstract
             $this->writer->line('Argument template CLI dump: ' . $this->config->cli_cmd_dump);
         }
 
-        if (isset($this->config->s3)) {
-            $this->writer->line()
-                ->line('S3 settings')
-                ->separate()
-                ->line('AWS key: ' . $this->config->s3->aws_key)
-                ->line('AWS secret key: ' . $this->config->s3->aws_secret_key)
-                ->line('AWS bucket: ' . $this->config->s3->aws_bucket);
-        }
         $this->writer->line();
         return;
     }
