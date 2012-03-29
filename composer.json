@@ -8,11 +8,11 @@
     "bin": ["bin/dbpatch.php"],
     "authors": [
         {
-            "name": "Sandy Pleyte",
+            "name": "Sandy Pleyte"
         },
         {
-            "name": "Martijn de Letter",
-        },
+            "name": "Martijn de Letter"
+        }
     ],
     "require": {
         "php": ">=5.1.0"
