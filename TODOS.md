@@ -6,4 +6,3 @@ Todo
 - Refactor database class
 - Fix phpDoc blocks
 - Improve exceptions
-- Determine license (+ adding license headers)
