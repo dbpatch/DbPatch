@@ -126,7 +126,9 @@ class DbPatch_Core_Config
      */
     protected function detectConfigType($filename)
     {
-        return strtolower(end(explode('.', $filename)));
+        $parts = explode('.', $filename);
+        $end = end($parts);
+        return strtolower($end);
     }
 
     /**
