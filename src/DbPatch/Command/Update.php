@@ -124,7 +124,7 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
                 continue;
             }
 
-            $result = $patchFile->setDb($this->db->getAdapter())
+            $result = $patchFile->setDb($this->db)
                     ->setConfig($this->config)
                     ->setWriter($this->writer)
                     ->apply();

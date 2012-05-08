@@ -96,7 +96,7 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
             $patchClassName = 'DbPatchPHPPatch' . str_pad($this->patchNumber, $patchNumberSize, '0', STR_PAD_LEFT);
 
             // retrieve db adapter object for use in php patch file
-            $db = $this->getDb();
+            $db = $this->getDb()->getAdapter();
             $config = $this->getConfig();
             $writer = $this->getWriter();
 
