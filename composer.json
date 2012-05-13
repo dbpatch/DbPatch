@@ -1,0 +1,20 @@
+{
+    "name": "dbpatch/dbpatch",
+    "type": "library",
+    "description": "DbPatch is a commandline utility to manage/track (my)sql/php patch files.",
+    "keywords": ["db", "database", "migrations"],
+    "homepage": "http://www.dbpatch-project.com/",
+    "license": "BSD",
+    "bin": ["bin/dbpatch.php"],
+    "authors": [
+        {
+            "name": "Sandy Pleyte"
+        },
+        {
+            "name": "Martijn de Letter"
+        }
+    ],
+    "require": {
+        "php": ">=5.1.0"
+    }
+}
