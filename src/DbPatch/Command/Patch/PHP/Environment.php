@@ -48,7 +48,7 @@
  */
 
 /**
- * Abstract PHP Patch file
+ * Dedicated Environment to run the PHP patch files
  *
  * @package DbPatch
  * @subpackage Patch
@@ -60,7 +60,7 @@
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.1.0
  */
-abstract class DbPatch_Patch_Abstract
+class DbPatch_Command_Patch_PHP_Environment
 {
     /**
      * @var null|\Zend_Db_Adapter_Abstract
@@ -77,24 +77,23 @@ abstract class DbPatch_Patch_Abstract
      */
     protected $config = null;
 
-
     /**
-     * @abstract
      * Install the php patch
      */
-    abstract public function install();
-
-    /**
-     * @abstract
-     * Rollback the php patch
-     */
-    abstract public function rollback();
+    public function install($filename)
+    {
+        $db = $this->getDb();
+        $config = $this->getConfig();
+        $writer = $this->getWriter();
+        
+        include($filename);
+    }
 
     /**
      * @param \Zend_Db_Adapter_Abstract $db
      * @return DbPatch_Command_Patch_Abstract
      */
-    public function setDb($db)
+    public function setDb(Zend_Db_Adapter_Abstract $db)
     {
         $this->db = $db;
         return $this;
@@ -144,6 +143,4 @@ abstract class DbPatch_Patch_Abstract
     {
         return $this->config;
     }
-
-
 }

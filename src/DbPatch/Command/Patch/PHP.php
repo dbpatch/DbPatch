@@ -92,25 +92,13 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
         }
 
         try {
-            $patchNumberSize = $this->getPatchNumberSize($this->getConfig()->patch_directory);
-            $patchClassName = 'DbPatchPHPPatch' . str_pad($this->patchNumber, $patchNumberSize, '0', STR_PAD_LEFT);
-
-            // retrieve db adapter object for use in php patch file
-            $db = $this->getDb();
-            $config = $this->getConfig();
-            $writer = $this->getWriter();
-
-            include($phpFile);
-
-            // Did we include an PHP Patch object?
-            if (class_exists($patchClassName)) {
-                $patch = new $patchClassName();
-                $patch->setDb($db)
-                    ->setWriter($writer)
-                    ->setConfig($config)
-                    ->install();
-
-            }
+            
+            $env = new DbPatch_Command_Patch_PHP_Environment();
+            $env->setDb($this->getDb()->getAdapter())
+                ->setWriter($this->getWriter())
+                ->setConfig($this->getConfig())
+                ->install($phpFile);
+                
         } catch (Exception $e) {
             $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
             return false;
@@ -152,6 +140,5 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
         $content = '<?php' . PHP_EOL . '// ' . $description . PHP_EOL;
         $this->writeFile($patchDirectory . '/' . $filename, $content);
     }
-
 }
  

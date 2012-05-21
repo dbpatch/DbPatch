@@ -265,17 +265,17 @@ abstract class DbPatch_Command_Patch_Abstract
     }
 
     /**
-     * @param \Zend_Db_Adapter_Abstract $db
+     * @param \DbPatch_Core_Db $db
      * @return DbPatch_Command_Patch_Abstract
      */
-    public function setDb($db)
+    public function setDb(DbPatch_Core_Db $db)
     {
         $this->db = $db;
         return $this;
     }
 
     /**
-     * @return null|\Zend_Db_Adapter_Abstract
+     * @return null|\DbPatch_Core_Db
      */
     public function getDb()
     {
