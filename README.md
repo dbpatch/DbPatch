@@ -8,13 +8,13 @@ DbPatch is a commandline utility to manage/track (my)sql/php patch files.
 Requirements
 ------------
 DbPatch requires the following:
-*  PHP 5.1.x or higher
-*  MySQL (client)
+
+* PHP 5.1.x or higher
+* MySQL (client)
 
 Documentation
 -------------
-For more detailed information you can check our online documentation at:
-[https://github.com/dbpatch/DbPatch/wiki]
+For more detailed information you can check our online documentation at: [https://github.com/dbpatch/DbPatch/wiki](https://github.com/dbpatch/DbPatch/wiki)
 
 License
 -------
@@ -24,6 +24,6 @@ Support
 -------
 If you're looking for help, you can reach me by:
 
-*  Twitter: @dbpatchproject ([http://twitter.com/dbpatchproject])
-*  Github: [https://github.com/dbpatch/DbPatch]
+*  Twitter: @dbpatchproject ([http://twitter.com/dbpatchproject](http://twitter.com/dbpatchproject))
+*  Github: [https://github.com/dbpatch/DbPatch](https://github.com/dbpatch/DbPatch)
 

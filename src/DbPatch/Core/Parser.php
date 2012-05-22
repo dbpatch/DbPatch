@@ -37,7 +37,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package DbPatch
- * @subpackage Command_Patch
+ * @subpackage Core
  * @author Sandy Pleyte
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
@@ -48,97 +48,46 @@
  */
 
 /**
- * PHP Patch file
+ * DbPatch Command Parser
+ * used to parse the import commanc and dump command
  *
  * @package DbPatch
- * @subpackage Command_Patch
+ * @subpackage Core
  * @author Sandy Pleyte
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
- * @since File available since Release 1.0.0
  */
-class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
+class DbPatch_Core_Parser
 {
-    /**
-     * @var array
-     */
-    protected $data = array(
-        'filename' => null,
-        'basename' => null,
-        'patch_number' => null,
-        'branch' => null,
-        'description' => null,
-    );
-
-    /**
-     * Apply the PHP Patch
-     *
-     * @return bool
-     */
-    public function apply()
+    static public function parse($command, $params)
     {
-
-        $writer = $this->getWriter();
-        $phpFile = $this->filename;
-
-        $writer->line('apply patch: ' . $this->basename);
-
-        if (!file_exists($phpFile)) {
-            $this->getWriter()->line(sprintf('php file %s doesn\'t exists', $phpFile));
-            return false;
+        if (!is_array($params)) {
+            throw new DbPatch_Exception('params array expected');
         }
 
-        try {
-            
-            $env = new DbPatch_Command_Patch_PHP_Environment();
-            $env->setDb($this->getDb()->getAdapter())
-                ->setWriter($this->getWriter())
-                ->setConfig($this->getConfig())
-                ->install($phpFile);
-                
-        } catch (Exception $e) {
-            $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
-            return false;
+        $orgKeys = array_keys($params);
+        $keys    = array_map(array('DbPatch_Core_Parser', 'mapKeyParam'), $orgKeys);
+        $values  = array_values($params);
+
+        // remove empty tags first
+        preg_match_all('/({%([0-9A-Za-z_-]+)%})(.*?)({%\\2%})/', $command, $matches);
+        foreach($matches[2] as $index => $key) {
+            if (in_array($key, $orgKeys) && !empty($params[$key])) {
+                $command  = str_replace($matches[1][$index], '', $command);
+                continue;
+            }
+            $command  = str_replace($matches[0][$index], '', $command);
         }
 
-        return true;
+        $output  = str_replace($keys, $values, $command);
+        return $output;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    static public function mapKeyParam($key)
     {
-        return 'PHP';
-    }
-
-    /**
-     * Return the first line (after <?php)
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->getComment(1);
-    }
-
-    /**
-     * Create PHP Patch file
-     *
-     * @param string $description
-     * @param string $patchDirectory
-     * @param string $patchPrefix
-     * @return void
-     */
-    public function create($description, $patchDirectory, $patchPrefix)
-    {
-        $patchNumberSize = $this->getPatchNumberSize($patchDirectory);
-        $filename = $this->getPatchFilename($patchPrefix, strtolower($this->getType()), $patchNumberSize);
-        $content = '<?php' . PHP_EOL . '// ' . $description . PHP_EOL;
-        $this->writeFile($patchDirectory . '/' . $filename, $content);
+        return '{'.$key.'}';
     }
 }
- 

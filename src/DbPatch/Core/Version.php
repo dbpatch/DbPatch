@@ -65,7 +65,7 @@ class DbPatch_Core_Version
     /**
      * @var string version number
      */
-    const VERSION = '1.0.1';
+    const VERSION = '1.1';
 
     /**
      * @static

@@ -37,108 +37,110 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package DbPatch
- * @subpackage Command_Patch
+ * @subpackage Patch
  * @author Sandy Pleyte
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
- * @since File available since Release 1.0.0
+ * @since File available since Release 1.1.0
  */
 
 /**
- * PHP Patch file
+ * Dedicated Environment to run the PHP patch files
  *
  * @package DbPatch
- * @subpackage Command_Patch
+ * @subpackage Patch
  * @author Sandy Pleyte
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
- * @since File available since Release 1.0.0
+ * @since File available since Release 1.1.0
  */
-class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
+class DbPatch_Command_Patch_PHP_Environment
 {
     /**
-     * @var array
+     * @var null|\Zend_Db_Adapter_Abstract
      */
-    protected $data = array(
-        'filename' => null,
-        'basename' => null,
-        'patch_number' => null,
-        'branch' => null,
-        'description' => null,
-    );
+    protected $db = null;
 
     /**
-     * Apply the PHP Patch
-     *
-     * @return bool
+     * @var null|DbPatch_Core_Writer
      */
-    public function apply()
-    {
+    protected $writer = null;
 
+    /**
+     * @var null|DbPatch_Core_Config
+     */
+    protected $config = null;
+
+    /**
+     * Install the php patch
+     */
+    public function install($filename)
+    {
+        $db = $this->getDb();
+        $config = $this->getConfig();
         $writer = $this->getWriter();
-        $phpFile = $this->filename;
-
-        $writer->line('apply patch: ' . $this->basename);
-
-        if (!file_exists($phpFile)) {
-            $this->getWriter()->line(sprintf('php file %s doesn\'t exists', $phpFile));
-            return false;
-        }
-
-        try {
-            
-            $env = new DbPatch_Command_Patch_PHP_Environment();
-            $env->setDb($this->getDb()->getAdapter())
-                ->setWriter($this->getWriter())
-                ->setConfig($this->getConfig())
-                ->install($phpFile);
-                
-        } catch (Exception $e) {
-            $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
-            return false;
-        }
-
-        return true;
+        
+        include($filename);
     }
 
     /**
-     * @return string
+     * @param \Zend_Db_Adapter_Abstract $db
+     * @return DbPatch_Command_Patch_Abstract
      */
-    public function getType()
+    public function setDb(Zend_Db_Adapter_Abstract $db)
     {
-        return 'PHP';
+        $this->db = $db;
+        return $this;
     }
 
     /**
-     * Return the first line (after <?php)
-     *
-     * @return string
+     * @return null|\Zend_Db_Adapter_Abstract
      */
-    public function getDescription()
+    public function getDb()
     {
-        return $this->getComment(1);
+        return $this->db;
+
     }
 
     /**
-     * Create PHP Patch file
-     *
-     * @param string $description
-     * @param string $patchDirectory
-     * @param string $patchPrefix
-     * @return void
+     * @param DbPatch_Core_Writer $writer
+     * @return DbPatch_Command_Patch_Abstract
      */
-    public function create($description, $patchDirectory, $patchPrefix)
+    public function setWriter($writer)
     {
-        $patchNumberSize = $this->getPatchNumberSize($patchDirectory);
-        $filename = $this->getPatchFilename($patchPrefix, strtolower($this->getType()), $patchNumberSize);
-        $content = '<?php' . PHP_EOL . '// ' . $description . PHP_EOL;
-        $this->writeFile($patchDirectory . '/' . $filename, $content);
+        $this->writer = $writer;
+        return $this;
+    }
+
+    /**
+     * @return DbPatch_Core_Writer|null
+     */
+    public function getWriter()
+    {
+        return $this->writer;
+    }
+
+    /**
+     * @param DbPatch_Core_Config $config
+     * @return DbPatch_Command_Patch_Abstract
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+        return $this;
+    }
+
+    /**
+     * @return DbPatch_Core_Config|null
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 }
- 

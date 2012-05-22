@@ -89,24 +89,57 @@ class DbPatch_Command_Info extends DbPatch_Command_Abstract
             ->line()
             ->line('Database settings')
             ->separate()
-            ->line('Database adapter: ' . $this->config->db->adapter)
-            ->line('Host: ' . $this->config->db->params->host)
-            ->line('Username: ' . $this->config->db->params->dbname)
-            ->line('Password: ' . $this->config->db->params->username)
-            ->line('Database: ' . $this->config->db->params->password)
-            ->line('Charset: ' . $this->config->db->params->charset)
-            ->line('Bin directory: ' . $this->config->db->params->bin_dir);
+            ->line('Database adapter: ' . get_class($this->getDb()->getAdapter()));
 
-        if (isset($this->config->s3)) {
-            $this->writer->line()
-                ->line('S3 settings')
-                ->separate()
-                ->line('AWS key: ' . $this->config->s3->aws_key)
-                ->line('AWS secret key: ' . $this->config->s3->aws_secret_key)
-                ->line('AWS bucket: ' . $this->config->s3->aws_bucket);
+            $this->dumpArray($this->getDb()->getAdapter()->getConfig());
+
+        if (isset($this->config->db->params->bin_dir)) {
+            $this->writer->line('Bin directory: ' . $this->config->db->params->bin_dir);
         }
+        if (isset($this->config->cli_cmd_import)) {
+            $this->writer->line('Argument template CLI client: ' . $this->config->cli_cmd_import);
+        }
+        if (isset($this->config->cli_cmd_dump)) {
+            $this->writer->line('Argument template CLI dump: ' . $this->config->cli_cmd_dump);
+        }
+
         $this->writer->line();
         return;
+    }
+
+    /**
+     * Writes array like ['foo' => 'bar'] as "Foo: bar"
+     *
+     * @param array $data
+     * @param int $indent
+     */
+    public function dumpArray(array $data, $indent = 0)
+    {
+        foreach ($data as $key => $value) {
+            if (empty($value)) {
+                continue;
+            }
+
+            if ($key == 'password') {
+                $value = '[hidden]';
+            }
+
+            $this->writer->indent($indent);
+
+            if (is_array($value)) {
+                $this->writer->line(
+                    ucfirst($key) . ':'
+                );
+
+                $this->dumpArray($value, $indent+1);
+            } else {
+                $this->writer->line(
+                    ucfirst($key) . ': ' . $value
+                );
+            }
+        }
+
+        return $this;
     }
 
     public function showHelp($command = 'info')

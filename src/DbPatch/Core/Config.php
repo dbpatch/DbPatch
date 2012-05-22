@@ -84,19 +84,68 @@ class DbPatch_Core_Config
 
         switch ($type) {
             case 'php' :
-                $dbPatchConfig = array();
-                require_once $filename;
-                $this->config = new Zend_Config($dbPatchConfig);
+                $this->config = $this->loadPhpConfig($filename, 'dbpatch', false);
                 break;
             case 'ini' :
-                $this->config = new Zend_Config_Ini($filename, 'dbpatch');
+                $this->config = $this->loadIniConfig($filename, 'dbpatch', true);
                 break;
             case 'xml' :
-                $this->config = new Zend_Config_Xml($filename, 'dbpatch');
+                $this->config = $this->loadXmlConfig($filename, 'dbpatch', true);
                 break;
             default:
                 throw new DbPatch_Exception('Not a valid config file');
         }
+    }
+
+    /**
+     * Load a PHP config file
+     *
+     * @param string $filename Path to config file to load
+     * @param bool $allowOverride
+     */
+    protected function loadPhpConfig($filename, $allowOverride)
+    {
+        $returnedConfig = require_once $filename;
+
+        if (isset($dbPatchConfig)) {
+            return new Zend_Config($dbPatchConfig, $allowOverride);
+        }
+
+        if ($returnedConfig instanceof Zend_Config) {
+            return $returnedConfig;
+        }
+
+        if (is_array($returnedConfig)) {
+            return new Zend_Config($returnedConfig, $allowOverride);
+        }
+
+        throw new DbPatch_Exception(
+            'Could not determine database configuration'
+        );
+    }
+
+    /**
+     * Load a Ini config file
+     *
+     * @param string $filename Path to config file to load
+     * @param string $section Config section to load from file
+     * @param bool $allowOverride
+     */
+    protected function loadIniConfig($filename, $section, $allowOverride)
+    {
+        return new Zend_Config_Ini($filename, $section, $allowOverride);
+    }
+
+    /**
+     * Load a XML config file
+     *
+     * @param string $filename Path to config file to load
+     * @param string $section Config section to load from file
+     * @param bool $allowOverride
+     */
+    protected function loadXmlConfig($filename, $section, $allowOverride)
+    {
+        return new Zend_Config_Xml($filename, $section, $allowOverride);
     }
 
     /**
@@ -120,15 +169,13 @@ class DbPatch_Core_Config
 
     /**
      * Detect config type based on file extension
-     * 
+     *
      * @param string $filename
      * @return string
      */
     protected function detectConfigType($filename)
     {
-        $parts = explode('.', $filename);
-        $end = end($parts);
-        return strtolower($end);
+        return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
 
     /**

@@ -64,6 +64,11 @@
 class DbPatch_Core_Application
 {
     /**
+     * @var Zend_Config $config
+     */
+    protected $config = null;
+
+    /**
      * Initialize the dbpatch application
      * Typically called from bin/dbpatch.php
      * @return void
@@ -82,10 +87,29 @@ class DbPatch_Core_Application
             return;
         }
 
+        // Setup command
+        if ($console->getCommand() == 'setup') {
+
+            try {
+                return $runner->getCommand('setup', $console)
+                    ->execute();
+
+            } catch (Exception $e) {
+                $writer->error($e->getMessage())->line();
+                $runner->showHelp();
+                exit(1);
+            }
+        }
+
         // Load the right config file
         try {
-            $config = $this->getConfig($configFile);
-            if ($useColor || $config->color) {
+            if ($this->config === null) {
+                $config = $this->getConfig($configFile);
+            } else {
+                $config = $this->config;
+            }
+
+            if ($useColor || (isset($config->color) && $config->color)) {
                 $writer->setColor($this->getWriterColor());
             }
             if(isset($config->debug) && $config->debug) {
@@ -95,14 +119,19 @@ class DbPatch_Core_Application
         } catch (Exception $e) {
             $writer->error($e->getMessage())->line();
             $runner->showHelp();
-            exit;
+            exit(1);
         }
-
-        $db = $this->getDb($config);
 
         // Finally execute the right command
         try {
+            $db = $this->getDb($config);
             $command = $console->getCommand();
+
+            if($command == '') {
+                $runner->showHelp();
+                exit(0);
+            }
+
             $runner->getCommand($command, $console)
                     ->setConfig($config)
                     ->setDb($db)
@@ -112,9 +141,9 @@ class DbPatch_Core_Application
         } catch (Exception $e) {
             $writer->error($e->getMessage())->line();
             $runner->showHelp();
-            exit;
+            exit(1);
         }
-        return;
+        exit(0);
     }
 
     /**
@@ -136,14 +165,19 @@ class DbPatch_Core_Application
         return $config->getConfig();
     }
 
+    public function setConfig(Zend_Config $config)
+    {
+        $this->config = $config;
+    }
+
     /**
      * @param \Zend_Config|\Zend_Config_Ini|\Zend_Config_Xml $config
-     * @return null|Zend_Db_Adapter_Abstract
+     * @return null|DbPatch_Core_Db
      */
     protected function getDb($config)
     {
         $db = new DbPatch_Core_Db($config);
-        return $db->getDb();
+        return $db;
     }
 
     /**

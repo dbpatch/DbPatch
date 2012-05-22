@@ -92,6 +92,10 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
         try {
             $db = $this->getDb();
             $db->import($this->data['filename']);
+
+            // SQLite needs a reconnect after changing scheme
+            $this->fixSqliteSchemaChangedBug();
+
         } catch (Exception $e) {
             $this->writer->error($e->getMessage());
             return false;
@@ -133,4 +137,22 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
         $this->writeFile($patchDirectory . '/' . $filename, $content);
     }
 
+    /**
+     * Fix "database schema has changed" error
+     *
+     * The VACUUM option makes it harder to execute queries 
+     * while other session (i.e. import command) modify the 
+     * database. Reconnecting prevents the error.
+     *
+     * @return DbPatch_Command_Patch_SQL
+     * @see http://www.mail-archive.com/sqlite-users@sqlite.org/msg04887.html
+     */
+    public function fixSqliteSchemaChangedBug()
+    {
+        if ($this->getDb()->getAdapter() instanceof Zend_Db_Adapter_Pdo_Sqlite) {
+            $this->getDb()->reconnect();
+        }
+
+        return $this;
+    }
 }

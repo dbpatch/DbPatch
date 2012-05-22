@@ -65,7 +65,12 @@ class DbPatch_Core_Db
     /**
      * @var null|\Zend_Db_Adapter_Abstract
      */
-    protected $db = null;
+    protected $adapter = null;
+
+    /**
+     * @var Zend_Config $config
+     */
+    protected $config = null;
 
     /**
      * @param \Zend_Config|\Zend_Config_Ini|\Zend_Config_Xml $config
@@ -73,16 +78,163 @@ class DbPatch_Core_Db
      */
     public function __construct($config)
     {
-        $dbConfig = $config->db->params->toArray();
-        $dbConfig['adapterNamespace'] = 'DbPatch_Db_Adapter';
-        $this->db = Zend_Db::factory($config->db->adapter, $dbConfig);
+        $this->config = $config;
+        if (!isset($config->db)) {
+            throw new DbPatch_Exception('No database configuration found');
+        }
+        if ($config->db instanceof Zend_Db_Adapter_Abstract) {
+            $this->adapter = $config->db;
+        } else {
+            $this->adapter = Zend_Db::factory(
+                $config->db->adapter, $config->db->params->toArray()
+            );
+        }
+
+        // Enable compatibility for the bin_dir setting
+        $this->enableOldConfigCompatibility();
     }
 
     /**
      * @return null|Zend_Db_Adapter_Abstract
      */
-    public function getDb()
+    public function getAdapter()
     {
-        return $this->db;
+        return $this->adapter;
+    }
+
+    /**
+     * @return Zend_Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Import a SQL file
+     *
+     * @throws DbPatch_Exception
+     * @param string $filename
+     * @return bool
+     */
+    public function import($filename)
+    {
+        $commandLine = $this->getCliCommand($this->config->import_command, $filename);
+
+        $retval = exec($commandLine, $result, $return);
+
+        if (($retval === false) || ($return <> 0)) {
+            throw new DbPatch_Exception(
+                'Error importing file ' .
+                    $filename .
+                    "\n" .
+                    $commandLine .
+                    "\n" .
+                    implode(PHP_EOL, $result)
+            );
+        }
+        return true;
+
+    }
+
+    /**
+     * Dump database to file
+     *
+     * @throws DbPatch_Exception
+     * @param string $filename
+     * @return bool
+     */
+    public function dump($filename)
+    {
+        $commandLine = $this->getCliCommand($this->config->dump_command, $filename);
+
+        $retval = exec($commandLine, $result, $return);
+
+        if (($retval === false) || ($return <> 0)) {
+            throw new DbPatch_Exception(
+                'Error dumping file ' .
+                    $filename .
+                    "\n" .
+                    $commandLine .
+                    "\n" .
+                    implode(PHP_EOL, $result)
+            );
+        }
+        return true;
+    }
+
+    /**
+     * Reconnect to the database, this will create 
+     * a new adapter instance.
+     *
+     * @return DbPatch_Core_Db
+     */
+    public function reconnect()
+    {
+        // this simulates unserialize(serialize($obj)) without
+        // actually serializing
+        $this->getAdapter()->__sleep();
+        $this->getAdapter()->__wakeup();
+    }
+
+    /**
+     * @param string $command Shell command template to execute,
+     *                takes :configkey notation
+     * @param string $filename Filename of patch or dump file
+     * @return string Command to execute
+     */
+    protected function getCliCommand($command, $filename)
+    {
+        $config = $this->getAdapter()->getConfig();
+
+        $params = array();
+        $params['filename'] = $filename;
+
+        $keys = array('host', 'port', 'username', 'password', 'dbname', 'charset', 'filename');
+        foreach ($keys as $key) {
+            if (isset($config[$key]) && !empty($config[$key])) {
+                $params[$key] = escapeshellarg($config[$key]);
+            }
+        }
+
+        return DbPatch_Core_Parser::parse($command, $params);
+    }
+
+    /**
+     * This method provides backward compatibility for
+     * the 'bin_dir' configuration option. it could be
+     * removed in future versions. using bin_dir only
+     * is not sufficient because it limits the user to
+     * mysql/mysqldump. it's also not possible to use
+     * bin_dir and pass a Zend_Db_Adapter instance as
+     * configuration value.
+     *
+     * @return DbPatch_Core_Db
+     */
+    protected function enableOldConfigCompatibility()
+    {
+        $options = '-h{host} {%port%}-P{port} {%port%}-u{username} {%password%}-p{password} {%password%}--default-character-set={charset} {dbname}';
+
+        if (!isset($this->config->dump_command)) {
+            $dir = '';
+
+            if (isset($this->config->db->bin_dir)) {
+                $dir = $this->config->db->bin_dir . DIRECTORY_SEPARATOR;
+            }
+
+            $this->config->dump_command = "{$dir}mysqldump {$options} > {filename} 2>&1";
+        }
+
+        if (!isset($this->config->import_command)) {
+            $dir = '';
+
+            if (isset($this->config->db->bin_dir)) {
+                $dir = $this->config->db->bin_dir . DIRECTORY_SEPARATOR;
+            }
+
+            $this->config->import_command = "{$dir}mysql {$options} < {filename} 2>&1";
+        }
+
+        return $this;
     }
 }

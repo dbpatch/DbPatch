@@ -37,21 +37,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package DbPatch
- * @subpackage Command_Patch
+ * @subpackage Command
  * @author Sandy Pleyte
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
- * @since File available since Release 1.0.0
+ * @since File available since Release 1.1.0
  */
 
 /**
- * PHP Patch file
+ * Setup command
+ * 
+ * The only thing this command does is simply copying the right config file from the docs dir to the current dir
  *
  * @package DbPatch
- * @subpackage Command_Patch
+ * @subpackage Command
  * @author Sandy Pleyte
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
@@ -60,85 +62,42 @@
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
  */
-class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
+class DbPatch_Command_Setup extends DbPatch_Command_Abstract
 {
-    /**
-     * @var array
-     */
-    protected $data = array(
-        'filename' => null,
-        'basename' => null,
-        'patch_number' => null,
-        'branch' => null,
-        'description' => null,
-    );
-
-    /**
-     * Apply the PHP Patch
-     *
-     * @return bool
-     */
-    public function apply()
+    public function execute()
     {
+        $type = $this->console->getOptionValue('type', 'ini');
 
-        $writer = $this->getWriter();
-        $phpFile = $this->filename;
+        if (!in_array(strtolower($type), array('ini', 'php', 'xml'))) {
+            throw new DbPatch_Exception('Invalid configuration type!');
+        }
+        
+        $skelConfig = realpath(dirname(__FILE__) . '/../../../') . '/docs/dbpatch.' . $type;
+        $newConfig = 'dbpatch.'.$type;
 
-        $writer->line('apply patch: ' . $this->basename);
-
-        if (!file_exists($phpFile)) {
-            $this->getWriter()->line(sprintf('php file %s doesn\'t exists', $phpFile));
-            return false;
+        if (!file_exists($skelConfig)) {
+            throw new DbPatch_Exception('Invalid configuration skeleton file: '. $skelConfig);
         }
 
-        try {
-            
-            $env = new DbPatch_Command_Patch_PHP_Environment();
-            $env->setDb($this->getDb()->getAdapter())
-                ->setWriter($this->getWriter())
-                ->setConfig($this->getConfig())
-                ->install($phpFile);
-                
-        } catch (Exception $e) {
-            $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
-            return false;
+        if (file_exists($newConfig)) {
+        	throw new DbPatch_Exception($newConfig .' already exists.');
         }
 
-        return true;
+        if (!copy($skelConfig, $newConfig)) {
+        	throw new DbPatch_Exception('failed to copy '. $newConfig);	
+        }
+
+        $this->getWriter()->line($newConfig. ' in place.')->line('Use \'vi '. $newConfig.'\' to finalize your dbpatch configuration.');
     }
 
     /**
-     * @return string
-     */
-    public function getType()
-    {
-        return 'PHP';
-    }
-
-    /**
-     * Return the first line (after <?php)
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->getComment(1);
-    }
-
-    /**
-     * Create PHP Patch file
-     *
-     * @param string $description
-     * @param string $patchDirectory
-     * @param string $patchPrefix
      * @return void
      */
-    public function create($description, $patchDirectory, $patchPrefix)
+    public function showHelp($command = 'setup')
     {
-        $patchNumberSize = $this->getPatchNumberSize($patchDirectory);
-        $filename = $this->getPatchFilename($patchPrefix, strtolower($this->getType()), $patchNumberSize);
-        $content = '<?php' . PHP_EOL . '// ' . $description . PHP_EOL;
-        $this->writeFile($patchDirectory . '/' . $filename, $content);
+        parent::showHelp($command);
+        $writer = $this->getWriter();
+        $writer->indent(2)->line('--type=<type>      create a configuration file of the following types `ini`, `php` or `xml`')
+                ->line();
     }
 }
- 

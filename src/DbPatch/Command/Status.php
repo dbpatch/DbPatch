@@ -78,6 +78,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
             $this->showPatchesToApply($branch);
         }
 
+        // warn about changed patches
         $patches = $this->getAppliedPatches();
         $this->showChangedPatches($patches);
 
@@ -92,10 +93,10 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
                 $limit = count($patches);
             }
             for ($i = 0; $i < $limit; $i++) {
-                
+
                 $this->writer->line(sprintf("%04d | %s | %s | %s",
                                             $patches[$i]['patch_number'],
-                                            $patches[$i]['completed'],
+                                            date('m-d-Y', $patches[$i]['completed']),
                                             $patches[$i]['filename'],
                                             $patches[$i]['description']));
             }
@@ -110,18 +111,26 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
     protected function showChangedPatches($patches)
     {
         if (count($patches) == 0) return;
-        
+
         $patchDirectory = $this->getPatchDirectory();
         if (is_dir($patchDirectory)) {
             foreach($patches as $patch) {
                 $file = $patchDirectory . '/' . $patch['filename'];
+                if (file_exists($file)) {
 
-                $hash = hash_file('crc32', $file);
-                if($hash != $patch['hash']) {
+                    $hash = hash_file('crc32', $file);
+                    if($hash != $patch['hash']) {
+                        $this->getWriter()->warning(
+                            $patch['filename'] .
+                            ' has been changed since it\'s applied on ' .
+                            date('m-d-Y', $patch['completed'])
+                        );
+                    }
+                } else {
                     $this->getWriter()->warning(
                         $patch['filename'] .
-                        ' has been changed since it\'s applied on ' .
-                        $patch['completed']
+                        ' has been removed after it was applied on ' .
+                        date('m-d-Y', $patch['completed'])
                     );
                 }
             }
@@ -144,6 +153,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
         $this->getWriter()->line($line)->separate();
 
         $patches = $this->getPatches($branch);
+        $defaultBranch = $this->getDefaultBranch();
 
         if (count($patches) == 0) {
             $this->getWriter()->line("no patches found")->line();
@@ -156,7 +166,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
             }
 
             $line = "use 'dbpatch update";
-            if ($branch <> self::DEFAULT_BRANCH) {
+            if ($branch != $defaultBranch) {
                 $line .= " --branch={$branch}";
             }
             $line .= "' to apply the patches\n";
@@ -173,32 +183,38 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
         return $limit;
     }
 
+    protected function getDefaultBranch()
+    {
+        $defaultBranch = $this->config->get('default_branch', self::DEFAULT_BRANCH);
+        return $defaultBranch;
+    }
+
     /**
      * Get list of patches that are applied
-     * 
+     *
      * @param string $branch
      * @return array
      */
     protected function getAppliedPatches($branch = '')
     {
-        $db = $this->getDb();
+        $db = $this->getDb()->getAdapter();
 
         $where = '';
         if ($branch != '') {
-            $where = 'WHERE branch =\'' . $db->escapeSQL($branch) . '\'';
+            $where = 'WHERE branch =\'' . $branch . '\'';
         }
 
         $sql = sprintf("
             SELECT
-                `patch_number`,
-                `completed`,
-                `filename`,
-                `description`,
-                `hash`,
-                IF(`branch`='%s',0,1) as `branch_order`
-            FROM `%s`
+                patch_number,
+                completed,
+                filename,
+                description,
+                hash,
+                CASE WHEN branch='%s' THEN 0 ELSE 1 END AS branch_order
+            FROM %s
             %s
-            ORDER BY `completed` DESC, `branch_order` ASC, `patch_number` DESC
+            ORDER BY completed DESC, branch_order ASC, patch_number DESC
             ",
                        self::DEFAULT_BRANCH,
                        self::TABLE,
