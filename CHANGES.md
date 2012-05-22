@@ -10,7 +10,7 @@ Please do not exceed 80 characters per line.
 Latest changes go on top, different types of changes may be mixed.
 
 
-Changes in DbPatch 1.x.x
+Changes in DbPatch 1.1.0
 ------------------------
 \+ Added support for PHP Object patches
 
@@ -18,9 +18,11 @@ Changes in DbPatch 1.x.x
 
 \* Fixed bug in the info command
 
-\+ Added support for Sqlite3
+\+ Added support for Sqlite3 and PostgreSQL
 
 \+ Added setup command
+
+\+ Added composer support
 
 \* Optimized status and show commands (less memory usage)
 
