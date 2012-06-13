@@ -214,6 +214,7 @@ abstract class DbPatch_Command_Abstract
     protected function validateChangelog()
     {
         if ($this->changelogExists()) {
+            $this->updateColumnType();
             return true;
         }
 
@@ -448,6 +449,27 @@ abstract class DbPatch_Command_Abstract
             return false;
         }
 
+    }
+
+    /**
+     * Check column types
+     * return void
+     */
+    protected function updateColumnType()
+    {
+        $adapter = strtolower($this->config->db->adapter);
+        if (in_array($adapter, array('mysql', 'mysqli', 'pdo_mysql'))) {
+            $columns = $this->getDb()->getAdapter()->describeTable(self::TABLE);
+            foreach($columns as $columnName => $meta) {
+                if ($columnName == 'completed' && strtolower($meta['DATA_TYPE']) == 'timestamp') {
+                    $db = $this->getDb()->getAdapter();
+                    $db->query(sprintf("ALTER TABLE %s ADD completed2 int(11) NOT NULL DEFAULT 0 AFTER completed", $db->quoteIdentifier(self::TABLE)));
+                    $db->query(sprintf("UPDATE %s SET completed2 = UNIX_TIMESTAMP(completed)", $db->quoteIdentifier(self::TABLE)));
+                    $db->query(sprintf("ALTER TABLE %s DROP COLUMN completed, CHANGE completed2 completed INT(11) NOT NULL", $db->quoteIdentifier(self::TABLE)));
+                    $this->writer->line('Updated column type');
+                }
+            }
+        }
     }
 
     /**
