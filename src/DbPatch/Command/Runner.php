@@ -38,10 +38,8 @@
  *
  * @package DbPatch
  * @subpackage Command
- * @author Sandy Pleyte
- * @author Martijn De Letter
- * @copyright 2011 Sandy Pleyte
- * @copyright 2010-2011 Martijn De Letter
+ * @author Rudi de Vries
+ * @copyright 2013 Rudi de Vries
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
@@ -49,13 +47,11 @@
 
 /**
  * Handle all the available commands
- * 
+ *
  * @package DbPatch
  * @subpackage Command
- * @author Sandy Pleyte
- * @author Martijn De Letter
- * @copyright 2011 Sandy Pleyte
- * @copyright 2010-2011 Martijn De Letter
+ * @author Rudi de Vries
+ * @copyright 2013 Rudi de Vries
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
@@ -76,7 +72,7 @@ class DbPatch_Command_Runner
         return array(
             'help', 'create', 'remove', 'show',
             'status', 'sync', 'update', 'dump',
-            'info', 'setup'
+            'info', 'setup', 'print'
         );
 
     }
@@ -108,6 +104,8 @@ class DbPatch_Command_Runner
             case 'du' : $cmd = 'dump';
                         break;
             case 'in' : $cmd = 'info';
+                        break;
+            case 'pr' : $cmd = 'print';
                         break;
         }
 
@@ -161,7 +159,7 @@ class DbPatch_Command_Runner
 
     /**
      * Show help options of DbPatch
-     * 
+     *
      * @return void
      */
     public function showHelp()
@@ -179,6 +177,7 @@ class DbPatch_Command_Runner
                 ->indent(2)->line('dump       dump database')
                 ->indent(2)->line('info       show configuration')
                 ->indent(2)->line('setup      setup a new dbpatch config file')
+                ->indent(2)->line('print      print contents of not applied patches')
                 ->line()
                 ->line('see \'dbpatch help <command>\' for more information on a specific command');
     }

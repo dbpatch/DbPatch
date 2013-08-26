@@ -40,8 +40,10 @@
  * @subpackage Command_Patch
  * @author Sandy Pleyte
  * @author Martijn De Letter
+ * @author Rudi de Vries
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
+ * @copyright 2013 Rudi de Vries
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
@@ -49,13 +51,15 @@
 
 /**
  * SQL Patch file
- * 
+ *
  * @package DbPatch
  * @subpackage Command_Patch
  * @author Sandy Pleyte
  * @author Martijn De Letter
+ * @author Rudi de Vries
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
+ * @copyright 2013 Rudi de Vries
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
@@ -75,17 +79,16 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
 
     /**
      * Apply SQL Patch
-     * 
+     *
      * @return bool
      */
     public function apply()
     {
         $this->writer->line('apply patch: ' . $this->basename);
-        $content = file_get_contents($this->data['filename']);
-        if ($content == '') {
-            $this->writer->error(
-                sprintf('patch file %s is empty', $this->data['basename'])
-            );
+
+        $content = $this->getContents();
+
+        if ($content === false) {
             return false;
         }
 
@@ -101,6 +104,22 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContents()
+    {
+        $content = file_get_contents($this->data['filename']);
+        if ($content == '') {
+            $this->writer->error(
+                sprintf('patch file %s is empty', $this->data['basename'])
+            );
+            return false;
+        }
+
+        return $content;
     }
 
     /**
@@ -140,8 +159,8 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
     /**
      * Fix "database schema has changed" error
      *
-     * The VACUUM option makes it harder to execute queries 
-     * while other session (i.e. import command) modify the 
+     * The VACUUM option makes it harder to execute queries
+     * while other session (i.e. import command) modify the
      * database. Reconnecting prevents the error.
      *
      * @return DbPatch_Command_Patch_SQL
