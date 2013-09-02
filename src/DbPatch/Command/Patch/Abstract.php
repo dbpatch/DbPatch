@@ -54,8 +54,10 @@
  * @subpackage Command_Patch
  * @author Sandy Pleyte
  * @author Martijn De Letter
+ * @author Rudi de Vries
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
+ * @copyright 2013 Rudi de Vries
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
@@ -102,6 +104,12 @@ abstract class DbPatch_Command_Patch_Abstract
      * @return void
      */
     abstract function apply();
+
+    /**
+     * @abstract
+     * @return string
+     */
+    abstract function getContents();
 
     /**
      * @abstract

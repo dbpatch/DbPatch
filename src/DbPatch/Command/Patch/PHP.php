@@ -40,8 +40,10 @@
  * @subpackage Command_Patch
  * @author Sandy Pleyte
  * @author Martijn De Letter
+ * @author Rudi de Vries
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
+ * @copyright 2013 Rudi de Vries
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
@@ -54,8 +56,10 @@
  * @subpackage Command_Patch
  * @author Sandy Pleyte
  * @author Martijn De Letter
+ * @author Rudi de Vries
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
+ * @copyright 2013 Rudi de Vries
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
@@ -92,19 +96,35 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
         }
 
         try {
-            
+
             $env = new DbPatch_Command_Patch_PHP_Environment();
             $env->setDb($this->getDb()->getAdapter())
                 ->setWriter($this->getWriter())
                 ->setConfig($this->getConfig())
                 ->install($phpFile);
-                
+
         } catch (Exception $e) {
             $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContents()
+    {
+        $content = file_get_contents($this->filename);
+        if ($content == '') {
+            $this->writer->error(
+                sprintf('patch file %s is empty', $this->basename)
+            );
+            return false;
+        }
+
+        return $content;
     }
 
     /**
@@ -141,4 +161,4 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
         $this->writeFile($patchDirectory . '/' . $filename, $content);
     }
 }
- 
+
