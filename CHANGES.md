@@ -10,6 +10,11 @@ Please do not exceed 80 characters per line.
 Latest changes go on top, different types of changes may be mixed.
 
 
+Changes in DbPatch 1.2.0
+------------------------
+\+ Added support for printing the contents of the patch files
+   Contributed by Rudi de Vries
+
 Changes in DbPatch 1.1.0
 ------------------------
 \+ Added support for PHP Object patches

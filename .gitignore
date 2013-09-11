@@ -1,3 +1,6 @@
 .idea/*
 atlassian-ide-plugin.xml
 build/
+data/
+*.tgz
+package.xml
