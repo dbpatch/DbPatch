@@ -27,3 +27,7 @@ If you're looking for help, you can reach me by:
 *  Twitter: @dbpatchproject ([http://twitter.com/dbpatchproject](http://twitter.com/dbpatchproject))
 *  Github: [https://github.com/dbpatch/DbPatch](https://github.com/dbpatch/DbPatch)
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/dbpatch/dbpatch/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
