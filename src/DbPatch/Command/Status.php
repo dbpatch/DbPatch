@@ -201,7 +201,10 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
 
         $where = '';
         if ($branch != '') {
-            $where = 'WHERE branch =\'' . $branch . '\'';
+            $where = sprintf(
+                " WHERE branch = %s ",
+                $db->quote($branch)
+            );
         }
 
         $sql = sprintf("
@@ -225,6 +228,7 @@ class DbPatch_Command_Status extends DbPatch_Command_Abstract
     }
 
     /**
+     * @param string $command
      * @return void
      */
     public function showHelp($command = 'status')
