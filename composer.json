@@ -4,7 +4,7 @@
     "description": "DbPatch is a commandline utility to manage/track (my)sql/php patch files.",
     "keywords": ["db", "database", "migrations"],
     "homepage": "http://www.dbpatch-project.com/",
-    "license": "BSD",
+    "license": "MIT",
     "bin": ["bin/dbpatch.php"],
     "authors": [
         {

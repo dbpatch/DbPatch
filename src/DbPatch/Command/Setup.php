@@ -42,7 +42,7 @@
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
- * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @license http://www.opensource.org/licenses/MIT MIT License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.1.0
  */
@@ -58,7 +58,7 @@
  * @author Martijn De Letter
  * @copyright 2011 Sandy Pleyte
  * @copyright 2010-2011 Martijn De Letter
- * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @license http://www.opensource.org/licenses/MIT MIT License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.0.0
  */

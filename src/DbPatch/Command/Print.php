@@ -41,7 +41,7 @@
  * @subpackage Command
  * @author Rudi de Vries
  * @copyright 2013 Rudi de Vries
- * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @license http://www.opensource.org/licenses/MIT MIT License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.1.2
  */
@@ -53,7 +53,7 @@
  * @subpackage Command
  * @author Rudi de Vries
  * @copyright 2013 Rudi de Vries
- * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @license http://www.opensource.org/licenses/MIT MIT License
  * @link http://www.github.com/dbpatch/DbPatch
  * @since File available since Release 1.1.2
  */
