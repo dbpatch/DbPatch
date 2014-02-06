@@ -118,7 +118,7 @@ class DbPatch_Command_Remove extends DbPatch_Command_Abstract
             $this->getWriter()->line("Patch $patchNumber not found {$branchMsg} in `" . self::TABLE . "` table");
         }
         else if (count($patchRecords) > 1) {
-            // @todo this is not happening anymore ???????
+            // only happens when a specific patch number is used in different branches
             $branchArray = array();
             foreach ($patchRecords as $branch) {
                 $branchArray[] = $branch['branch'];
