@@ -95,18 +95,11 @@ class DbPatch_Command_Patch_PHP extends DbPatch_Command_Patch_Abstract
             return false;
         }
 
-        try {
-
-            $env = new DbPatch_Command_Patch_PHP_Environment();
-            $env->setDb($this->getDb()->getAdapter())
-                ->setWriter($this->getWriter())
-                ->setConfig($this->getConfig())
-                ->install($phpFile);
-
-        } catch (Exception $e) {
-            $this->getWriter()->line(sprintf('error php patch: %s', $e->getMessage()));
-            return false;
-        }
+        $env = new DbPatch_Command_Patch_PHP_Environment();
+        $env->setDb($this->getDb()->getAdapter())
+            ->setWriter($this->getWriter())
+            ->setConfig($this->getConfig())
+            ->install($phpFile);
 
         return true;
     }

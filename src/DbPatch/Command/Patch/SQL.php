@@ -92,17 +92,12 @@ class DbPatch_Command_Patch_SQL extends DbPatch_Command_Patch_Abstract
             return false;
         }
 
-        try {
-            $db = $this->getDb();
-            $db->import($this->data['filename']);
+        $db = $this->getDb();
+        $db->import($this->data['filename']);
 
-            // SQLite needs a reconnect after changing scheme
-            $this->fixSqliteSchemaChangedBug();
+        // SQLite needs a reconnect after changing scheme
+        $this->fixSqliteSchemaChangedBug();
 
-        } catch (Exception $e) {
-            $this->writer->error($e->getMessage());
-            return false;
-        }
         return true;
     }
 

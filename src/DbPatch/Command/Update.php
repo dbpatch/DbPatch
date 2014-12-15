@@ -107,14 +107,14 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
         foreach ($patchFiles as $patchNr => $patchFile)
         {
             if (($patchFile->patch_number <> $latestPatchNumber + 1) && !$force) {
-                $this->writer->error(
-                    sprintf('expected patch number %d instead of %d (%s). Use --force to override this check.',
-                            $latestPatchNumber + 1,
-                            $patchFile->patch_number,
-                            $patchFile->basename
+                throw new DbPatch_Exception(
+                    sprintf(
+                        'expected patch number %d instead of %d (%s). Use --force to override this check.',
+                        $latestPatchNumber + 1,
+                        $patchFile->patch_number,
+                        $patchFile->basename
                     )
                 );
-                return;
             }
 
             if (in_array($patchNr, $patchNumbersToSkip)) {
@@ -130,12 +130,11 @@ class DbPatch_Command_Update extends DbPatch_Command_Abstract
                     ->apply();
 
             if (!$result) {
-                return;
+                throw new DbPatch_Exception(sprintf('Running patch %d failed!', $patchNr));
             }
 
             $this->addToChangelog($patchFile);
             $latestPatchNumber = $patchFile->patch_number;
-
         }
     }
 
